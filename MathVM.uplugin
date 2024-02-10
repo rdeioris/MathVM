@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "MathVM",
+	"Description": "Math Expressions Evaluator",
+	"Category": "Other",
+	"CreatedBy": "Roberto De Ioris",
+	"CreatedByURL": "https://github.com/rdeioris",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "MathVM",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}

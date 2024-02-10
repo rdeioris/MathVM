@@ -1,0 +1,132 @@
+// Copyright 2024 - Roberto De Ioris.
+
+#if WITH_DEV_AUTOMATION_TESTS
+#include "MathVM.h"
+#include "Misc/AutomationTest.h"
+
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Empty, "MathVM.Empty", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Empty::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("17");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 17.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Add, "MathVM.Add", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Add::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("1 + 2");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 3.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Precedence, "MathVM.Precedence", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Precedence::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("(1 + 2) * 3");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 9.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Assignment, "MathVM.Assignment", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Assignment::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("x = 17");
+
+	TMap<FString, double> LocalVariables;
+	FString Error;
+	LocalVariables.Add("x", -1);
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteAndDiscard(LocalVariables, Error));
+
+	TestEqual(TEXT("x"), LocalVariables["x"], 17.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_IncrementVar, "MathVM.IncrementVar", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_IncrementVar::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("x = 17; x = x + 5");
+
+	TMap<FString, double> LocalVariables;
+	FString Error;
+	LocalVariables.Add("x", -1);
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteAndDiscard(LocalVariables, Error));
+
+	TestEqual(TEXT("x"), LocalVariables["x"], 22.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_VarWithNum, "MathVM.VarWithNum", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_VarWithNum::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("x17 = 1000.123");
+
+	TMap<FString, double> LocalVariables;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteAndDiscard(LocalVariables, Error));
+
+	TestEqual(TEXT("x"), LocalVariables["x17"], 1000.123);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_VarArgs, "MathVM.VarArgs", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_VarArgs::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("pow(0, 2);sin(cos(sin(cos(cos(5)))))");
+
+	TMap<FString, double> LocalVariables;
+	FString Error;
+
+	MathVM.ExecuteAndDiscard(LocalVariables, Error);
+
+	//TestEqual(TEXT("x"), LocalVariables["x17"], 1000.123);
+
+	return true;
+}
+
+#endif
