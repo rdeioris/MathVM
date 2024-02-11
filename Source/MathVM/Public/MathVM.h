@@ -24,7 +24,7 @@ enum class EMathVMTokenType : uint8
 class FMathVMBase;
 struct FMathVMCallContext;
 
-struct FMathVMToken
+struct MATHVM_API FMathVMToken
 {
 	FMathVMToken() = delete;
 
@@ -70,7 +70,7 @@ using FMathVMStack = TArray<const FMathVMToken*>;
 using FMathVMFunction = TFunction<bool(FMathVMCallContext& CallContext, const TArray<double>& Args)>;
 using FMathVMOperator = TFunction<bool(FMathVMCallContext& CallContext)>;
 
-class IMathVMResource
+class MATHVM_API IMathVMResource
 {
 public:
 	virtual ~IMathVMResource() = default;
@@ -80,7 +80,7 @@ protected:
 	FRWLock ResourceLock;
 };
 
-class FMathVMBase
+class MATHVM_API FMathVMBase
 {
 
 public:
@@ -170,7 +170,7 @@ protected:
 	TArray<TSharedPtr<IMathVMResource>> Resources;
 };
 
-class FMathVM : public FMathVMBase
+class MATHVM_API FMathVM : public FMathVMBase
 {
 public:
 	FMathVM();
@@ -178,7 +178,7 @@ public:
 	FMathVM(FMathVM&& Other) = delete;
 };
 
-struct FMathVMCallContext
+struct MATHVM_API FMathVMCallContext
 {
 	FMathVMBase& MathVM;
 	FMathVMStack Stack;
