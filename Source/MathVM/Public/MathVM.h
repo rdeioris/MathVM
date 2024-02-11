@@ -70,6 +70,16 @@ using FMathVMStack = TArray<const FMathVMToken*>;
 using FMathVMFunction = TFunction<bool(FMathVMCallContext& CallContext, const TArray<double>& Args)>;
 using FMathVMOperator = TFunction<bool(FMathVMCallContext& CallContext)>;
 
+class IMathVMResource
+{
+public:
+	virtual ~IMathVMResource() = default;
+	virtual double Read(const TArray<double>& Args) const = 0;
+	virtual void Write(const double Value, const TArray<double>& Args) = 0;
+protected:
+	FRWLock ResourceLock;
+};
+
 class FMathVMBase
 {
 
@@ -107,6 +117,8 @@ public:
 
 	void SetGlobalVariable(const FString& Name, const double Value);
 	double GetGlobalVariable(const FString& Name);
+
+	int32 RegisterResource(TUniquePtr<IMathVMResource> Resource);
 
 protected:
 
@@ -152,6 +164,8 @@ protected:
 	FRWLock GlobalVariablesLock;
 
 	TArray<TArray<const FMathVMToken*>> Statements;
+
+	TArray<TUniquePtr<IMathVMResource>> Resources;
 };
 
 class FMathVM : public FMathVMBase

@@ -224,6 +224,11 @@ bool FMathVMBase::RegisterGlobalVariable(const FString& Name, const double Value
 	return true;
 }
 
+int32 FMathVMBase::RegisterResource(TUniquePtr<IMathVMResource> Resource)
+{
+	return Resources.Add(MoveTemp(Resource));
+}
+
 FMathVM::FMathVM()
 {
 	RegisterFunction("sin", MathVM::BuiltinFunctions::Sin, MathVM::BuiltinFunctions::SinArgs);
