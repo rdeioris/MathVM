@@ -52,12 +52,10 @@ namespace MathVM
 			return CallContext.PushResult(FMath::GetMappedRangeValueClamped(TRange<double>(Args[1], Args[2]), TRange<double>(Args[3], Args[4]), Args[0]));
 		}
 
-		//RandomStream.Initialize(FPlatformTime::Cycles());
-
 		bool Rand(MATHVM_ARGS)
 		{
-			//return CallContext.PushResult(RandomStream.FRandRange(Args[0], Args[1]));
-			return false;
+			static FRandomStream RandomStream;
+			return CallContext.PushResult(RandomStream.FRandRange(Args[0], Args[1]));
 		}
 
 		bool Pow(MATHVM_ARGS)

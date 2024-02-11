@@ -134,13 +134,11 @@ bool FMathVMCallContext::PopArgument(double& Value)
 			return true;
 		}
 
-#if 0
-		if (MathVM.GlobalVariables.Contains(Token->Value))
+		if (MathVM.HasGlobalVariable(Token->Value))
 		{
-			Value = GlobalVariables[Token->Value];
+			Value = MathVM.HasGlobalVariable(Token->Value);
 			return true;
 		}
-#endif
 
 		return false;
 	}

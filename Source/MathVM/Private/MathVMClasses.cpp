@@ -103,6 +103,10 @@ FMathVMBase::FMathVMBase()
 			{
 				CallContext.LocalVariables[A] = B;
 			}
+			else if (CallContext.MathVM.HasGlobalVariable(A))
+			{
+				CallContext.MathVM.SetGlobalVariable(A, B);
+			}
 			else
 			{
 				CallContext.LocalVariables.Add(A, B);
@@ -162,6 +166,59 @@ bool FMathVMBase::RegisterFunction(const FString& Name, FMathVMFunction Callable
 	else
 	{
 		Functions.Add(Name, { Callable, NumArgs });
+	}
+
+	return true;
+}
+
+bool FMathVMBase::HasGlobalVariable(const FString& Name) const
+{
+	return GlobalVariables.Contains(Name);
+}
+
+void FMathVMBase::SetGlobalVariable(const FString& Name, const double Value)
+{
+	FRWScopeLock Lock(GlobalVariablesLock, FRWScopeLockType::SLT_Write);
+	GlobalVariables[Name] = Value;
+}
+
+double FMathVMBase::GetGlobalVariable(const FString& Name)
+{
+	FRWScopeLock Lock(GlobalVariablesLock, FRWScopeLockType::SLT_ReadOnly);
+	return GlobalVariables[Name];
+}
+
+bool FMathVMBase::RegisterGlobalVariable(const FString& Name, const double Value)
+{
+	if (Name.IsEmpty())
+	{
+		return false;
+	}
+
+	TCHAR FirstChar = Name[0];
+	const bool bValidStart = (FirstChar >= 'A' && FirstChar <= 'Z') || (FirstChar >= 'a' && FirstChar <= 'z') || FirstChar == '_';
+	if (!bValidStart)
+	{
+		return false;
+	}
+
+	for (int32 CharIndex = 1; CharIndex < Name.Len(); CharIndex++)
+	{
+		const TCHAR Char = Name[CharIndex];
+		const bool bValidChar = (Char >= 'A' && Char <= 'Z') || (Char >= 'a' && Char <= 'z') || (Char >= '0' && Char <= '9') || Char == '_';
+		if (!bValidChar)
+		{
+			return false;
+		}
+	}
+
+	if (GlobalVariables.Contains(Name))
+	{
+		GlobalVariables[Name] = Value;
+	}
+	else
+	{
+		GlobalVariables.Add(Name, Value);
 	}
 
 	return true;

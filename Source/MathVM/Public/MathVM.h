@@ -101,6 +101,13 @@ public:
 
 	bool RegisterFunction(const FString& Name, FMathVMFunction Callable, const int32 NumArgs);
 
+	bool RegisterGlobalVariable(const FString& Name, const double Value);
+
+	bool HasGlobalVariable(const FString& Name) const;
+
+	void SetGlobalVariable(const FString& Name, const double Value);
+	double GetGlobalVariable(const FString& Name);
+
 protected:
 
 	bool SetError(const FString& InError);
@@ -131,7 +138,6 @@ protected:
 	uint32 CurrentOffset;
 
 	FString Accumulator;
-	double NumberMultiplier;
 
 	TMap<FString, TPair<FMathVMFunction, int32>> Functions;
 
@@ -143,6 +149,7 @@ protected:
 	FMathVMOperator OperatorAssign;
 
 	TMap<FString, double> GlobalVariables;
+	FRWLock GlobalVariablesLock;
 
 	TArray<TArray<const FMathVMToken*>> Statements;
 };
@@ -153,9 +160,6 @@ public:
 	FMathVM();
 	FMathVM(const FMathVM& Other) = delete;
 	FMathVM(FMathVM&& Other) = delete;
-
-protected:
-	FRandomStream RandomStream;
 };
 
 struct FMathVMCallContext

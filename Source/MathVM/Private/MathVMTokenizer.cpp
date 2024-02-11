@@ -6,12 +6,22 @@ bool FMathVMBase::Tokenize(const FString& Code)
 {
 	const int32 CodeLen = Code.Len();
 	Accumulator = "";
-	NumberMultiplier = 1;
+	double NumberMultiplier = 1;
+	bool bIsInComment = false;
 
 	int32 CharIndex = 0;
 	while (CharIndex < CodeLen)
 	{
 		TCHAR Char = Code[CharIndex++];
+
+		if (bIsInComment)
+		{
+			if (Char == '\n' || Char == '\r')
+			{
+				bIsInComment = false;
+			}
+			continue;
+		}
 
 		const bool bStartsWithPoint = Char == '.';
 
@@ -210,6 +220,15 @@ bool FMathVMBase::Tokenize(const FString& Code)
 				return false;
 			}
 			NumberMultiplier = 1;
+		}
+		else if (Char == '#')
+		{
+			if (!CheckAndResetAccumulator())
+			{
+				return false;
+			}
+			NumberMultiplier = 1;
+			bIsInComment = true;
 		}
 		else if ((Char >= 'A' && Char <= 'Z') || (Char >= 'a' && Char <= 'z') || Char == '_')
 		{
