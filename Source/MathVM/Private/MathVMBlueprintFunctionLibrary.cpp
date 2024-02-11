@@ -105,7 +105,7 @@ protected:
 	EPixelFormat PixelFormat = EPixelFormat::PF_Unknown;
 };
 
-TUniquePtr<IMathVMResource> UMathVMBlueprintFunctionLibrary::MathVResourceFromTexture2D(UTexture2D* Texture)
+TUniquePtr<IMathVMResource> UMathVMBlueprintFunctionLibrary::MathVMResourceFromTexture2D(UTexture2D* Texture)
 {
 	if (!Texture)
 	{
@@ -113,4 +113,51 @@ TUniquePtr<IMathVMResource> UMathVMBlueprintFunctionLibrary::MathVResourceFromTe
 	}
 
 	return MakeUnique<FMathVMTexture2DResource>(Texture);
+}
+
+bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UObject*>& Resources, double& Result, FString& Error)
+{
+	if (Code.IsEmpty())
+	{
+		Error = "Empty code";
+		return false;
+	}
+
+	FMathVM MathVM;
+	for (int32 ResourceIndex = 0; ResourceIndex < Resources.Num(); ResourceIndex++)
+	{
+		UObject* Resource = Resources[ResourceIndex];
+		if (!Resource)
+		{
+			Error = FString::Printf(TEXT("Null resource at index %d"), ResourceIndex);
+			return false;
+		}
+		if (Resource->IsA<UTexture2D>())
+		{
+			TUniquePtr<IMathVMResource> NewResource = MathVMResourceFromTexture2D(Cast<UTexture2D>(Resource));
+			if (!NewResource)
+			{
+				Error = FString::Printf(TEXT("Null resource at index %d"), ResourceIndex);
+				return false;
+			}
+			if (MathVM.RegisterResource(MoveTemp(NewResource)) < 0)
+			{
+				Error = FString::Printf(TEXT("Unable to register resource at index %d"), ResourceIndex);
+				return false;
+			}
+		}
+		else
+		{
+			Error = FString::Printf(TEXT("Unsupported resource type: %s"), *(Resource->GetClass()->GetName()));
+			return false;
+		}
+	}
+
+	if (MathVM.TokenizeAndCompile(Code))
+	{
+		Error = MathVM.GetError();
+		return false;
+	}
+	TMap<FString, double> LocalVariablesCopy = LocalVariables;
+	return MathVM.ExecuteOne(LocalVariablesCopy, Result, Error);
 }
