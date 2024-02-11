@@ -12,12 +12,8 @@ bool FMathVMBase::TokenizeAndCompile(const FString& Code)
 	return Compile();
 }
 
-bool FMathVMBase::ExecuteStatement(const TArray<const FMathVMToken*> Statement, TMap<FString, double>& LocalVariables, const int32 PopResults, TArray<double>& Results, FString& Error, void* LocalContext)
+bool FMathVMBase::ExecuteStatement(FMathVMCallContext& CallContext, const TArray<const FMathVMToken*> Statement, FString& Error)
 {
-	FMathVMCallContext CallContext(*this, LocalVariables, LocalContext);
-	// this ensures no dangling pointers (no reallocation)
-	CallContext.TempTokens.Reserve(Statement.Num());
-
 	for (const FMathVMToken* Token : Statement)
 	{
 		if (Token->TokenType == EMathVMTokenType::Operator)
@@ -35,7 +31,7 @@ bool FMathVMBase::ExecuteStatement(const TArray<const FMathVMToken*> Statement, 
 
 			for (int32 ArgIndex = 0; ArgIndex < Token->DetectedNumArgs; ArgIndex++)
 			{
-				if (!CallContext.PopArgument(Args[ArgIndex]))
+				if (!CallContext.PopArgument(Args[(Token->DetectedNumArgs-1) - ArgIndex]))
 				{
 					Error = CallContext.LastError;
 					return false;
@@ -53,6 +49,29 @@ bool FMathVMBase::ExecuteStatement(const TArray<const FMathVMToken*> Statement, 
 		}
 	}
 
+	return true;
+}
+
+bool FMathVMBase::Execute(TMap<FString, double>& LocalVariables, const int32 PopResults, TArray<double>& Results, FString& Error, void* LocalContext)
+{
+	FMathVMCallContext CallContext(*this, LocalVariables, LocalContext);
+
+	int32 TempTokensToReserve = 0;
+	for (const TArray<const FMathVMToken*> Statement : Statements)
+	{
+		TempTokensToReserve += Statement.Num();
+	}
+	// this ensures no dangling pointers (no reallocation)
+	CallContext.TempTokens.Reserve(TempTokensToReserve);
+
+	for (const TArray<const FMathVMToken*> Statement : Statements)
+	{
+		if (!ExecuteStatement(CallContext, Statement, Error))
+		{
+			return false;
+		}
+	}
+
 	for (int32 PopIndex = 0; PopIndex < PopResults; PopIndex++)
 	{
 		if (CallContext.Stack.IsEmpty())
@@ -63,24 +82,29 @@ bool FMathVMBase::ExecuteStatement(const TArray<const FMathVMToken*> Statement, 
 
 		const FMathVMToken* LastToken = CallContext.Stack.Pop(false);
 
-		if (LastToken->TokenType != EMathVMTokenType::Number)
+		if (LastToken->TokenType == EMathVMTokenType::Number)
+		{
+			Results.Add(LastToken->NumericValue);
+		}
+		else if (LastToken->TokenType == EMathVMTokenType::Variable)
+		{
+			if (LocalVariables.Contains(LastToken->Value))
+			{
+				Results.Add(LocalVariables[LastToken->Value]);
+			}
+			else if (HasGlobalVariable(LastToken->Value))
+			{
+				Results.Add(GetGlobalVariable(LastToken->Value));
+			}
+			else
+			{
+				Error = FString::Printf(TEXT("Unset variable %s for result %d"), *(LastToken->Value), PopIndex);
+				return false;
+			}
+		}
+		else
 		{
 			Error = FString::Printf(TEXT("result %d is not a number"), PopIndex);
-			return false;
-		}
-
-		Results.Add(LastToken->NumericValue);
-	}
-
-	return true;
-}
-
-bool FMathVMBase::Execute(TMap<FString, double>& LocalVariables, const int32 PopResults, TArray<double>& Results, FString& Error, void* LocalContext)
-{
-	for (const TArray<const FMathVMToken*> Statement : Statements)
-	{
-		if (!ExecuteStatement(Statement, LocalVariables, PopResults, Results, Error, LocalContext))
-		{
 			return false;
 		}
 	}
@@ -136,7 +160,7 @@ bool FMathVMCallContext::PopArgument(double& Value)
 
 		if (MathVM.HasGlobalVariable(Token->Value))
 		{
-			Value = MathVM.HasGlobalVariable(Token->Value);
+			Value = MathVM.GetGlobalVariable(Token->Value);
 			return true;
 		}
 
@@ -175,4 +199,24 @@ bool FMathVMCallContext::PushResult(const double Value)
 	const int32 NewTempToken = TempTokens.Add(FMathVMToken(Value));
 	Stack.Add(&(TempTokens[NewTempToken]));
 	return true;
+}
+
+double FMathVMCallContext::ReadResource(const int32 Index, const TArray<double>& Args)
+{
+	TSharedPtr<IMathVMResource> Resource = MathVM.GetResource(Index);
+	if (!Resource)
+	{
+		return 0;
+	}
+	return Resource->Read(Args);
+}
+
+void FMathVMCallContext::WriteResource(const int32 Index, const TArray<double>& Args)
+{
+	TSharedPtr<IMathVMResource> Resource = MathVM.GetResource(Index);
+	if (!Resource)
+	{
+		return;
+	}
+	Resource->Write(Args);
 }

@@ -224,9 +224,19 @@ bool FMathVMBase::RegisterGlobalVariable(const FString& Name, const double Value
 	return true;
 }
 
-int32 FMathVMBase::RegisterResource(TUniquePtr<IMathVMResource> Resource)
+int32 FMathVMBase::RegisterResource(TSharedPtr<IMathVMResource> Resource)
 {
-	return Resources.Add(MoveTemp(Resource));
+	return Resources.Add(Resource);
+}
+
+TSharedPtr<IMathVMResource> FMathVMBase::GetResource(const int32 Index) const
+{
+	if (Resources.IsValidIndex(Index))
+	{
+		return Resources[Index];
+	}
+
+	return nullptr;
 }
 
 FMathVM::FMathVM()
@@ -243,4 +253,6 @@ FMathVM::FMathVM()
 	RegisterFunction("hue2b", MathVM::BuiltinFunctions::Hue2B, MathVM::BuiltinFunctions::Hue2BArgs);
 	RegisterFunction("lerp", MathVM::BuiltinFunctions::Lerp, MathVM::BuiltinFunctions::LerpArgs);
 	RegisterFunction("gradient", MathVM::BuiltinFunctions::Gradient, MathVM::BuiltinFunctions::GradientArgs);
+	RegisterFunction("read", MathVM::BuiltinFunctions::Read, MathVM::BuiltinFunctions::ReadArgs);
+	RegisterFunction("write", MathVM::BuiltinFunctions::Write, MathVM::BuiltinFunctions::WriteArgs);
 }

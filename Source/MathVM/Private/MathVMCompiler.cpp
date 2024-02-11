@@ -46,7 +46,7 @@ bool FMathVMBase::Compile()
 
 			if (FunctionHasFirstArgStack.IsEmpty() || !FunctionHasFirstArgStack.Last())
 			{
-				return SetError("Commas are expected only after first argument in functions");
+				return SetError("Commas are expected only after the first argument of a function");
 			}
 
 			FunctionsArgsStack.Last()++;
@@ -69,18 +69,21 @@ bool FMathVMBase::Compile()
 			}
 			OperatorStack.Pop(false);
 
-			if (!OperatorStack.IsEmpty() && OperatorStack.Last()->TokenType == EMathVMTokenType::Function)
+			if (!OperatorStack.IsEmpty())
 			{
-				// this is basically the only case the compiler needs a const_cast
-				FMathVMToken* FunctionToken = const_cast<FMathVMToken*>(OperatorStack.Last());
-
-				FunctionToken->DetectedNumArgs = FunctionsArgsStack.Pop(false) + (FunctionHasFirstArgStack.Pop() ? 1 : 0);
-
-				if (FunctionToken->NumArgs >= 0 && FunctionToken->DetectedNumArgs != FunctionToken->NumArgs)
+				if (OperatorStack.Last()->TokenType == EMathVMTokenType::Function)
 				{
-					return SetError(FString::Printf(TEXT("Function %s expects %d argument%s (detected %d)"), *(FunctionToken->Value), FunctionToken->NumArgs, FunctionToken->NumArgs == 1 ? TEXT("") : TEXT("s"), FunctionToken->DetectedNumArgs));
+					// this is basically the only case the compiler needs a const_cast
+					FMathVMToken* FunctionToken = const_cast<FMathVMToken*>(OperatorStack.Last());
+
+					FunctionToken->DetectedNumArgs = FunctionsArgsStack.Pop(false) + (FunctionHasFirstArgStack.Pop() ? 1 : 0);
+
+					if (FunctionToken->NumArgs >= 0 && FunctionToken->DetectedNumArgs != FunctionToken->NumArgs)
+					{
+						return SetError(FString::Printf(TEXT("Function %s expects %d argument%s (detected %d)"), *(FunctionToken->Value), FunctionToken->NumArgs, FunctionToken->NumArgs == 1 ? TEXT("") : TEXT("s"), FunctionToken->DetectedNumArgs));
+					}
+					OutputQueue.Add(OperatorStack.Pop(false));
 				}
-				OutputQueue.Add(OperatorStack.Pop(false));
 			}
 		}
 		else if (Token.TokenType == EMathVMTokenType::Semicolon)

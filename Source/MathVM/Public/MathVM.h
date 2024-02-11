@@ -75,7 +75,7 @@ class IMathVMResource
 public:
 	virtual ~IMathVMResource() = default;
 	virtual double Read(const TArray<double>& Args) const = 0;
-	virtual void Write(const double Value, const TArray<double>& Args) = 0;
+	virtual void Write(const TArray<double>& Args) = 0;
 protected:
 	FRWLock ResourceLock;
 };
@@ -118,7 +118,9 @@ public:
 	void SetGlobalVariable(const FString& Name, const double Value);
 	double GetGlobalVariable(const FString& Name);
 
-	int32 RegisterResource(TUniquePtr<IMathVMResource> Resource);
+	int32 RegisterResource(TSharedPtr<IMathVMResource> Resource);
+
+	TSharedPtr<IMathVMResource> GetResource(const int32 Index) const;
 
 protected:
 
@@ -134,7 +136,7 @@ protected:
 		return Tokens.Last();
 	}
 
-	bool ExecuteStatement(const TArray<const FMathVMToken*> Statement, TMap<FString, double>& LocalVariables, const int32 PopResults, TArray<double>& Results, FString& Error, void* LocalContext);
+	bool ExecuteStatement(FMathVMCallContext& CallContext, const TArray<const FMathVMToken*> Statement, FString& Error);
 
 	bool CheckAndResetAccumulator();
 
@@ -165,7 +167,7 @@ protected:
 
 	TArray<TArray<const FMathVMToken*>> Statements;
 
-	TArray<TUniquePtr<IMathVMResource>> Resources;
+	TArray<TSharedPtr<IMathVMResource>> Resources;
 };
 
 class FMathVM : public FMathVMBase
@@ -201,6 +203,10 @@ struct FMathVMCallContext
 	bool PopName(FString& Name);
 
 	bool PushResult(const double Value);
+
+	double ReadResource(const int32 Index, const TArray<double>& Args);
+
+	void WriteResource(const int32 Index, const TArray<double>& Args);
 };
 
 class FMathVMModule : public IModuleInterface

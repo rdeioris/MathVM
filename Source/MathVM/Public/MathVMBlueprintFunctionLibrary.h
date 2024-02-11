@@ -16,8 +16,8 @@ class MATHVM_API UMathVMBlueprintFunctionLibrary : public UBlueprintFunctionLibr
 	GENERATED_BODY()
 
 public:
-	static TUniquePtr<IMathVMResource> MathVMResourceFromTexture2D(UTexture2D* Texture);
+	static TSharedPtr<IMathVMResource> MathVMResourceFromTexture2D(UTexture2D* Texture);
 
-	UFUNCTION(BlueprintCallable, Category="MathVM")
-	bool MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UObject*>& Resources, double& Result, FString& Error);
+	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "LocalVariables,Resources"), Category="MathVM")
+	static bool MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UObject*>& Resources, double& Result, FString& Error);
 };

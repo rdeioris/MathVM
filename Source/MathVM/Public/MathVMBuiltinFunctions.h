@@ -20,5 +20,7 @@ namespace MathVM
 		bool Hue2B(MATHVM_ARGS); constexpr int32 Hue2BArgs = 1;
 		bool Lerp(MATHVM_ARGS); constexpr int32 LerpArgs = 3;
 		bool Gradient(MATHVM_ARGS); constexpr int32 GradientArgs = -1;
+		bool Read(MATHVM_ARGS); constexpr int32 ReadArgs = -1;
+		bool Write(MATHVM_ARGS); constexpr int32 WriteArgs = -1;
 	}
 }

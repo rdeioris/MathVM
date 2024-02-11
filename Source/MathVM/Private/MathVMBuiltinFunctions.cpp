@@ -144,5 +144,38 @@ namespace MathVM
 
 			return CallContext.PushResult(FMath::Lerp(Ranges[FoundRangeIndex].Value, Ranges[FoundRangeIndex + 1].Value, Fraction));
 		}
+
+		bool Read(MATHVM_ARGS)
+		{
+			if (Args.Num() < 1)
+			{
+				return CallContext.SetError("read expects at least 1 argument");
+			};
+
+			TArray<double> InterfaceArgs;
+			for (int32 Index = 1; Index < Args.Num(); Index++)
+			{
+				InterfaceArgs.Add(Args[Index]);
+			}
+
+			return CallContext.PushResult(CallContext.ReadResource(static_cast<int32>(Args[0]), InterfaceArgs));
+		}
+
+		bool Write(MATHVM_ARGS)
+		{
+			if (Args.Num() < 1)
+			{
+				return CallContext.SetError("write expects at least 1 argument");
+			};
+
+			TArray<double> InterfaceArgs;
+			for (int32 Index = 1; Index < Args.Num(); Index++)
+			{
+				InterfaceArgs.Add(Args[Index]);
+			}
+
+			CallContext.WriteResource(static_cast<int32>(Args[0]), InterfaceArgs);
+			return true;
+		}
 	}
 }

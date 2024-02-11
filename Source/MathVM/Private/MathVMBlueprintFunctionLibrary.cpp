@@ -12,21 +12,24 @@ public:
 		if (Mips.Num() > 0)
 		{
 			Width = Mips[0].SizeX;
-			Height = Mips[0].SizeX;
+			Height = Mips[0].SizeY;
 			PixelFormat = Texture->GetPixelFormat();
 			if (Width > 0 && Height > 0)
 			{
-				Pixels.AddUninitialized(Mips[0].BulkData.GetBulkDataSize());
 				const void* Data = Mips[0].BulkData.LockReadOnly();
-				FMemory::Memcpy(Pixels.GetData(), Data, Pixels.Num());
-				Mips[0].BulkData.Unlock();
+				if (Data)
+				{
+					Pixels.AddUninitialized(Mips[0].BulkData.GetBulkDataSize());
+					FMemory::Memcpy(Pixels.GetData(), Data, Pixels.Num());
+					Mips[0].BulkData.Unlock();
+				}
 			}
 		}
 	}
 
 	virtual double Read(const TArray<double>& Args) const override
 	{
-		if (Args.Num() < 1)
+		if (Args.Num() < 1 || Pixels.IsEmpty())
 		{
 			return 0;
 		}
@@ -74,7 +77,7 @@ public:
 			const int32 Offset = ((Y * Width + X) * 4) + BGRChannel;
 			if (Pixels.IsValidIndex(Offset))
 			{
-				return Pixels[Offset];
+				return Pixels[Offset] / 255.0;
 			}
 		}
 		break;
@@ -83,7 +86,7 @@ public:
 			const int32 Offset = ((Y * Width + X) * 4) + Channel;
 			if (Pixels.IsValidIndex(Offset))
 			{
-				return Pixels[Offset];
+				return Pixels[Offset] / 255.0;
 			}
 		}
 		break;
@@ -93,7 +96,7 @@ public:
 		return 0;
 	}
 
-	virtual void Write(const double Value, const TArray<double>& Args) override
+	virtual void Write(const TArray<double>& Args) override
 	{
 
 	}
@@ -105,14 +108,14 @@ protected:
 	EPixelFormat PixelFormat = EPixelFormat::PF_Unknown;
 };
 
-TUniquePtr<IMathVMResource> UMathVMBlueprintFunctionLibrary::MathVMResourceFromTexture2D(UTexture2D* Texture)
+TSharedPtr<IMathVMResource> UMathVMBlueprintFunctionLibrary::MathVMResourceFromTexture2D(UTexture2D* Texture)
 {
 	if (!Texture)
 	{
 		return nullptr;
 	}
 
-	return MakeUnique<FMathVMTexture2DResource>(Texture);
+	return MakeShared<FMathVMTexture2DResource>(Texture);
 }
 
 bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UObject*>& Resources, double& Result, FString& Error)
@@ -134,13 +137,13 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const
 		}
 		if (Resource->IsA<UTexture2D>())
 		{
-			TUniquePtr<IMathVMResource> NewResource = MathVMResourceFromTexture2D(Cast<UTexture2D>(Resource));
+			TSharedPtr<IMathVMResource> NewResource = MathVMResourceFromTexture2D(Cast<UTexture2D>(Resource));
 			if (!NewResource)
 			{
 				Error = FString::Printf(TEXT("Null resource at index %d"), ResourceIndex);
 				return false;
 			}
-			if (MathVM.RegisterResource(MoveTemp(NewResource)) < 0)
+			if (MathVM.RegisterResource(NewResource) < 0)
 			{
 				Error = FString::Printf(TEXT("Unable to register resource at index %d"), ResourceIndex);
 				return false;
@@ -153,11 +156,12 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const
 		}
 	}
 
-	if (MathVM.TokenizeAndCompile(Code))
+	if (!MathVM.TokenizeAndCompile(Code))
 	{
 		Error = MathVM.GetError();
 		return false;
 	}
+
 	TMap<FString, double> LocalVariablesCopy = LocalVariables;
 	return MathVM.ExecuteOne(LocalVariablesCopy, Result, Error);
 }
