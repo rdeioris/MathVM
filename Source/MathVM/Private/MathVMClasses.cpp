@@ -208,6 +208,135 @@ bool MathVM::Utils::SanitizeName(const FString& Name)
 	return true;
 }
 
+void MathVM::Utils::DrawLine(const FVector2D Point0, const FVector2D Point1, const FColor Color, TFunction<void(const int32 X, const int32 Y, const FColor Color)> DrawPixel)
+{
+	// https://en.wikipedia.org/wiki/Xiaolin_Wu's_line_algorithm
+
+	auto ColorWithBrightNess = [Color](const double InBrightness) -> FColor
+		{
+			FColor OutColor = Color;
+			OutColor.A = InBrightness * 255.0;
+			return OutColor;
+		};
+
+	auto FPart = [](const double Value) -> double
+		{
+			return Value - static_cast<int32>(Value);
+		};
+
+	double X0 = static_cast<int32>(Point0.X + 0.5);
+	double Y0 = static_cast<int32>(Point0.Y + 0.5);
+
+	double X1 = static_cast<int32>(Point1.X + 0.5);
+	double Y1 = static_cast<int32>(Point1.Y + 0.5);
+
+	bool bSteep = FMath::Abs(Y1 - Y0) > FMath::Abs(X1 - X0);
+
+	if (bSteep)
+	{
+		Swap(X0, Y0);
+		Swap(X1, Y1);
+	}
+
+	if (X0 > X1)
+	{
+		Swap(X0, X1);
+		Swap(Y0, Y1);
+	}
+
+	double DX = X1 - X0;
+	double DY = Y1 - Y0;
+
+	double Gradient = 1.0;
+
+	if (DX > 0.0)
+	{
+		Gradient = DY / DX;
+	}
+
+	const double W = 4 * FMath::Sqrt(1 + (Gradient * Gradient));
+
+	// handle first endpoint
+	double XEnd = static_cast<int32>(X0);
+	double YEnd = Y0 - (W - 1) * 0.5 + Gradient * (XEnd - X0);
+	double XGap = 1.0 - (X0 + 0.5 - XEnd);
+	int32 XPixel1 = XEnd;// this will be used in the main loop
+	int32 YPixel1 = static_cast<int32>(YEnd);
+	if (bSteep)
+	{
+		DrawPixel(YPixel1, XPixel1, ColorWithBrightNess((1.0 - FPart(YEnd)) * XGap));
+		for (int32 WIndex = 0; WIndex < static_cast<int32>(W); WIndex++)
+		{
+			DrawPixel(YPixel1 + WIndex + 1, XPixel1, ColorWithBrightNess(1));
+		}
+		DrawPixel(YPixel1 + W, XPixel1, ColorWithBrightNess(FPart(YEnd) * XGap));
+	}
+	else
+	{
+		DrawPixel(XPixel1, YPixel1, ColorWithBrightNess((1.0 - FPart(YEnd)) * XGap));
+		for (int32 WIndex = 0; WIndex < static_cast<int32>(W); WIndex++)
+		{
+			DrawPixel(XPixel1, YPixel1 + WIndex + 1, ColorWithBrightNess(1));
+		}
+		DrawPixel(XPixel1, YPixel1 + W, ColorWithBrightNess(FPart(YEnd) * XGap));
+	}
+
+	double InterY = YEnd + Gradient; // first y-intersection for the main loop
+
+	// handle second endpoint
+	XEnd = static_cast<int32>(X1);
+	YEnd = Y1 - (W - 1) * 0.5 + Gradient * (XEnd - X1);
+	XGap = 1 - (X1 + 0.5 - XEnd);
+	int32 XPixel2 = XEnd; //this will be used in the main loop
+	int32 YPixel2 = static_cast<int32>(YEnd);
+	if (bSteep)
+	{
+		DrawPixel(YPixel2, XPixel2, ColorWithBrightNess((1.0 - FPart(YEnd)) * XGap));
+		for (int32 WIndex = 0; WIndex < static_cast<int32>(W); WIndex++)
+		{
+			DrawPixel(YPixel2 + WIndex + 1, XPixel2, ColorWithBrightNess(1));
+		}
+		DrawPixel(YPixel2 + static_cast<int32>(W), XPixel2, ColorWithBrightNess(FPart(YEnd) * XGap));
+	}
+	else
+	{
+		DrawPixel(XPixel2, YPixel2, ColorWithBrightNess((1.0 - FPart(YEnd)) * XGap));
+		for (int32 WIndex = 0; WIndex < static_cast<int32>(W); WIndex++)
+		{
+			DrawPixel(XPixel2, YPixel2 + WIndex + 1, ColorWithBrightNess(1));
+		}
+		DrawPixel(XPixel2, YPixel2 + static_cast<int32>(W), ColorWithBrightNess(FPart(YEnd) * XGap));
+	}
+
+	// main loop
+	if (bSteep)
+	{
+		for (int32 X = XPixel1 + 1; X < XPixel2; X++)
+		{
+			DrawPixel(static_cast<int32>(InterY), X, ColorWithBrightNess(1.0 - FPart(InterY)));
+			for (int32 WIndex = 0; WIndex < static_cast<int32>(W); WIndex++)
+			{
+				DrawPixel(static_cast<int32>(InterY) + WIndex + 1, X, ColorWithBrightNess(1));
+			}
+			DrawPixel(static_cast<int32>(InterY) + static_cast<int32>(W), X, ColorWithBrightNess(FPart(InterY)));
+			InterY += Gradient;
+		}
+	}
+	else
+	{
+		for (int32 X = XPixel1 + 1; X < XPixel2; X++)
+		{
+			DrawPixel(X, static_cast<int32>(InterY), ColorWithBrightNess(1.0 - FPart(InterY)));
+			for (int32 WIndex = 0; WIndex < static_cast<int32>(W); WIndex++)
+			{
+				DrawPixel(X, static_cast<int32>(InterY) + WIndex + 1, ColorWithBrightNess(1));
+			}
+			DrawPixel(X, static_cast<int32>(InterY) + static_cast<int32>(W), ColorWithBrightNess(FPart(InterY)));
+			InterY += Gradient;
+		}
+	}
+}
+
 bool FMathVMBase::RegisterConst(const FString& Name, const double Value)
 {
 	if (!MathVM::Utils::SanitizeName(Name))
@@ -311,5 +440,5 @@ FMathVM::FMathVM()
 	RegisterFunction("read", MathVM::BuiltinFunctions::Read, MathVM::BuiltinFunctions::ReadArgs);
 	RegisterFunction("write", MathVM::BuiltinFunctions::Write, MathVM::BuiltinFunctions::WriteArgs);
 
-	SetGlobalVariable("PI", UE_PI);
+	RegisterConst("PI", UE_PI);
 }

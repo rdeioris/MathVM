@@ -113,7 +113,7 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const
 {
 	if (Code.IsEmpty())
 	{
-		Error = "Empty code";
+		Error = "Empty Code";
 		return false;
 	}
 
@@ -155,4 +155,174 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const
 
 	TMap<FString, double> LocalVariablesCopy = LocalVariables;
 	return MathVM.ExecuteOne(LocalVariablesCopy, Result, Error);
+}
+
+void UMathVMBlueprintFunctionLibrary::MathVMPlotter(const FString& Code, const int32 NumSamples, const TMap<FString, FColor>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable, const int32 TextureWidth, const int32 TextureHeight)
+{
+	if (Code.IsEmpty())
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty Code");
+		return;
+	}
+
+	if (NumSamples < 1)
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, "Invalid number of samples");
+		return;
+	}
+
+	if (VariablesToPlot.IsEmpty())
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty VariablesToPlot");
+		return;
+	}
+
+	if (SampleLocalVariable.IsEmpty())
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty Code");
+	}
+
+	if (TextureWidth < 1 || TextureHeight < 1)
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, "Invalid texture size");
+		return;
+	}
+
+	FMathVM MathVM;
+	if (!MathVM.TokenizeAndCompile(Code))
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, MathVM.GetError());
+		return;
+	}
+
+	FTexture2DMipMap* Mip = new FTexture2DMipMap();
+	Mip->SizeX = TextureWidth;
+	Mip->SizeY = TextureHeight;
+
+#if !WITH_EDITOR
+#if !NO_LOGGING
+	ELogVerbosity::Type CurrentLogSerializationVerbosity = LogSerialization.GetVerbosity();
+	bool bResetLogVerbosity = false;
+	if (CurrentLogSerializationVerbosity >= ELogVerbosity::Warning)
+	{
+		LogSerialization.SetVerbosity(ELogVerbosity::Error);
+		bResetLogVerbosity = true;
+	}
+#endif
+#endif
+
+#if !WITH_EDITOR
+	// this is a hack for allowing texture streaming without messing around with deriveddata
+	Mip->BulkData.SetBulkDataFlags(BULKDATA_PayloadInSeperateFile);
+#endif
+	Mip->BulkData.Lock(LOCK_READ_WRITE);
+
+#if !WITH_EDITOR
+#if !NO_LOGGING
+	if (bResetLogVerbosity)
+	{
+		LogSerialization.SetVerbosity(CurrentLogSerializationVerbosity);
+	}
+#endif
+#endif
+	const int32 PixelsSize = TextureWidth * TextureHeight * 4;
+
+	TMap<FString, TArray<FVector2D>> Points;
+	for (const TPair<FString, FColor>& Pair : VariablesToPlot)
+	{
+		TArray<FVector2D>& PointsCoordinates = Points.Add(Pair.Key);
+		// it is important to set it to invalid coordinates to avoid artifacts
+		PointsCoordinates.AddUninitialized(NumSamples);
+		for (int32 CoordIndex = 0; CoordIndex < NumSamples; CoordIndex++)
+		{
+			PointsCoordinates[CoordIndex] = FVector2D(-1, -1);
+		}
+	}
+
+	ParallelFor(NumSamples, [&](const int32 SampleIndex)
+		{
+			const double X = FMath::GetMappedRangeValueUnclamped(FVector2D(0, NumSamples - 1), FVector2D(0, TextureWidth - 1), SampleIndex);
+
+			TMap<FString, double> LocalVariables;
+			LocalVariables.Add(SampleLocalVariable, SampleIndex);
+
+			if (MathVM.ExecuteStealth(LocalVariables))
+			{
+				for (const TPair<FString, FColor>& Pair : VariablesToPlot)
+				{
+					if (LocalVariables.Contains(Pair.Key))
+					{
+						const double Y = FMath::GetMappedRangeValueUnclamped(FVector2D(DomainMin, DomainMax), FVector2D(0, TextureHeight - 1), FMath::Clamp(LocalVariables[Pair.Key], DomainMin, DomainMax));
+						Points[Pair.Key][SampleIndex] = FVector2D(X, (TextureHeight - 1) - Y);
+						UE_LOG(LogTemp, Error, TEXT("[%d] X: %d Y: %d [%f]"), SampleIndex, static_cast<int32>(X), static_cast<int32>(Y), LocalVariables[Pair.Key]);
+					}
+				}
+			}
+		});
+
+	uint8* Data = reinterpret_cast<uint8*>(Mip->BulkData.Realloc(PixelsSize));
+
+	FMemory::Memset(Data, 255, PixelsSize);
+
+	for (const TPair<FString, TArray<FVector2D>>& Pair : Points)
+	{
+		const FColor& Color = VariablesToPlot[Pair.Key];
+
+		ParallelFor(NumSamples - 1, [&](const int32 SampleIndex)
+			{
+				const FVector2D& Point0 = Pair.Value[SampleIndex];
+				const FVector2D& Point1 = Pair.Value[SampleIndex + 1];
+
+				if (Point0.X < 0 || Point1.X < 0 || Point0.Y < 0 || Point1.Y < 0)
+				{
+					return;
+				}
+
+				if (Point0.X >= TextureWidth || Point1.X >= TextureWidth || Point0.Y >= TextureHeight || Point1.Y >= TextureHeight)
+				{
+					return;
+				}
+
+				MathVM::Utils::DrawLine(Point0, Point1, Color, [Data, TextureWidth, TextureHeight](const int32 X, const int32 Y, const FColor Color)
+					{
+						if (X < 0 || Y < 0)
+						{
+							return;
+						}
+
+						if (X >= TextureWidth || Y >= TextureHeight)
+						{
+							return;
+						}
+
+						const int32 Offset = (Y * TextureWidth + X) * 4;
+
+						const double Alpha = Color.A / 255.0;
+
+						Data[Offset] = (Alpha * (Color.B / 255.0) + (1.0 - Alpha)) * 255;
+						Data[Offset + 1] = (Alpha * (Color.G / 255.0) + (1.0 - Alpha)) * 255;
+						Data[Offset + 2] = (Alpha * (Color.R / 255.0) + (1.0 - Alpha)) * 255;
+						Data[Offset + 3] = 255;
+					});
+			});
+	}
+
+	Mip->BulkData.Unlock();
+
+	UTexture2D* Texture = NewObject<UTexture2D>();
+
+	FTexturePlatformData* PlatformData = new FTexturePlatformData();
+	PlatformData->SizeX = TextureWidth;
+	PlatformData->SizeY = TextureHeight;
+	PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
+
+	PlatformData->Mips.Add(Mip);
+
+	Texture->SetPlatformData(PlatformData);
+
+	Texture->NeverStream = true;
+
+	Texture->UpdateResource();
+
+	OnTextureGenerated.ExecuteIfBound(Texture, "");
 }

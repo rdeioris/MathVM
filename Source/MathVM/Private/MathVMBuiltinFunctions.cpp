@@ -286,7 +286,7 @@ namespace MathVM
 
 		bool Map(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::GetMappedRangeValueClamped(TRange<double>(Args[1], Args[2]), TRange<double>(Args[3], Args[4]), Args[0]));
+			return CallContext.PushResult(FMath::GetMappedRangeValueUnclamped(FVector2D(Args[1], Args[2]), FVector2D(Args[3], Args[4]), Args[0]));
 		}
 
 		bool Max(MATHVM_ARGS)

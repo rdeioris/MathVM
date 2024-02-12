@@ -21,6 +21,8 @@ protected:
 	EPixelFormat PixelFormat = EPixelFormat::PF_Unknown;
 };
 
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FMathVMTextureGenerated, UTexture2D*, Texture, const FString&, Error);
+
 /**
  *
  */
@@ -34,4 +36,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "LocalVariables,Resources"), Category = "MathVM")
 	static bool MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UObject*>& Resources, double& Result, FString& Error);
+
+	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "Constants,GlobalVariables,Resources"), Category = "MathVM")
+	static void MathVMPlotter(const FString& Code, const int32 NumSamples, const TMap<FString, FColor>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i", const int32 TextureWidth = 256, const int32 TextureHeight = 256);
 };
