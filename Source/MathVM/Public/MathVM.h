@@ -80,6 +80,14 @@ protected:
 	FRWLock ResourceLock;
 };
 
+namespace MathVM
+{
+	namespace Utils
+	{
+		bool MATHVM_API SanitizeName(const FString& Name);
+	}
+}
+
 class MATHVM_API FMathVMBase
 {
 
@@ -112,6 +120,12 @@ public:
 	bool RegisterFunction(const FString& Name, FMathVMFunction Callable, const int32 NumArgs);
 
 	bool RegisterGlobalVariable(const FString& Name, const double Value);
+
+	bool RegisterConst(const FString& Name, const double Value);
+
+	bool HasConst(const FString& Name) const;
+
+	double GetConst(const FString& Name);
 
 	bool HasGlobalVariable(const FString& Name) const;
 
@@ -161,6 +175,8 @@ protected:
 	FMathVMOperator OperatorDiv;
 	FMathVMOperator OperatorMod;
 	FMathVMOperator OperatorAssign;
+
+	TMap<FString, const double> Constants;
 
 	TMap<FString, double> GlobalVariables;
 	FRWLock GlobalVariablesLock;

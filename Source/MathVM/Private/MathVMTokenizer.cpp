@@ -16,7 +16,7 @@ bool FMathVMBase::Tokenize(const FString& Code)
 
 		if (bIsInComment)
 		{
-			if (Char == '\n' || Char == '\r')
+			if (Char == '\n' || Char == '\r' || Char == '#')
 			{
 				bIsInComment = false;
 			}

@@ -31,7 +31,7 @@ bool FMathVMBase::ExecuteStatement(FMathVMCallContext& CallContext, const TArray
 
 			for (int32 ArgIndex = 0; ArgIndex < Token->DetectedNumArgs; ArgIndex++)
 			{
-				if (!CallContext.PopArgument(Args[(Token->DetectedNumArgs-1) - ArgIndex]))
+				if (!CallContext.PopArgument(Args[(Token->DetectedNumArgs - 1) - ArgIndex]))
 				{
 					Error = CallContext.LastError;
 					return false;
@@ -54,6 +54,15 @@ bool FMathVMBase::ExecuteStatement(FMathVMCallContext& CallContext, const TArray
 
 bool FMathVMBase::Execute(TMap<FString, double>& LocalVariables, const int32 PopResults, TArray<double>& Results, FString& Error, void* LocalContext)
 {
+	for (const TPair<FString, double>& LocalVariable : LocalVariables)
+	{
+		if (!MathVM::Utils::SanitizeName(LocalVariable.Key))
+		{
+			Error = FString::Printf(TEXT("Invalid local variable name \"%s\""), *LocalVariable.Key);
+			return false;
+		}
+	}
+
 	FMathVMCallContext CallContext(*this, LocalVariables, LocalContext);
 
 	int32 TempTokensToReserve = 0;
@@ -155,6 +164,12 @@ bool FMathVMCallContext::PopArgument(double& Value)
 		if (LocalVariables.Contains(Token->Value))
 		{
 			Value = LocalVariables[Token->Value];
+			return true;
+		}
+
+		if (MathVM.HasConst(Token->Value))
+		{
+			Value = MathVM.GetConst(Token->Value);
 			return true;
 		}
 
