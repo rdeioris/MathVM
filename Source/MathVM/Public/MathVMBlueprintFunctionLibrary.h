@@ -5,22 +5,16 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/KismetRenderingLibrary.h"
-#include "MathVM.h"
+#include "MathVMResourceObject.h"
 #include "MathVMBlueprintFunctionLibrary.generated.h"
 
-class MATHVM_API FMathVMTexture2DResource : public IMathVMResource
+namespace MathVM
 {
-public:
-	FMathVMTexture2DResource(UTexture2D* Texture);
-	virtual double Read(const TArray<double>& Args) const override;
-	virtual void Write(const TArray<double>& Args) override;
-
-protected:
-	TArray<uint8> Pixels;
-	int32 Width = 0;
-	int32 Height = 0;
-	EPixelFormat PixelFormat = EPixelFormat::PF_Unknown;
-};
+	namespace BlueprintUtility
+	{
+		bool RegisterResources(FMathVM& MathVM, const TArray<UMathVMResourceObject*>& Resources, FString& Error);
+	}
+}
 
 UENUM()
 enum class EMathVMPlotterShape : uint8
@@ -113,11 +107,15 @@ class MATHVM_API UMathVMBlueprintFunctionLibrary : public UBlueprintFunctionLibr
 	GENERATED_BODY()
 
 public:
-	static TSharedPtr<IMathVMResource> MathVMResourceFromTexture2D(UTexture2D* Texture);
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MathVM")
+	static UMathVMResourceObject* MathVMResourceObjectFromTexture2D(UTexture2D* Texture);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MathVM")
+	static UMathVMResourceObject* MathVMResourceObjectFromCurveBase(UCurveBase* Curve);
 
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "LocalVariables,Resources"), Category = "MathVM")
-	static bool MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UObject*>& Resources, double& Result, FString& Error);
+	static bool MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Constants,GlobalVariables,Resources,PlotterConfig"), Category = "MathVM")
-	static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
+	static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
 };
