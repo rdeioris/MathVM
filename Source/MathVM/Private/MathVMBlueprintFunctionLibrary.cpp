@@ -60,7 +60,7 @@ UMathVMResourceObject* UMathVMBlueprintFunctionLibrary::MathVMResourceObjectFrom
 	return NewResourceObject;
 }
 
-bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error)
+bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error)
 {
 	if (Code.IsEmpty())
 	{
@@ -81,8 +81,7 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const
 		return false;
 	}
 
-	TMap<FString, double> LocalVariablesCopy = LocalVariables;
-	return MathVM.ExecuteOne(LocalVariablesCopy, Result, Error);
+	return MathVM.ExecuteOne(LocalVariables, Result, Error);
 }
 
 void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)
