@@ -4,8 +4,7 @@ Unreal Engine plugin for Math Expressions evalutation
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/929f682e-7ec7-4caa-b70f-781d0fb16f01)
 
-![image](https://github.com/rdeioris/MathVM/assets/2234592/a0c8a47b-f08f-4ba1-ba21-623fb7842b52)
-
+![image](https://github.com/rdeioris/MathVM/assets/2234592/5c891201-d0bd-4127-bc08-80752761ac60)
 
 ## What is it?
 This plugins exposes a simple framework (both C++ and Blueprint) for running user-defined math expressions:
