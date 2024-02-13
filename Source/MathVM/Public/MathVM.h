@@ -85,7 +85,6 @@ namespace MathVM
 	namespace Utils
 	{
 		bool MATHVM_API SanitizeName(const FString& Name);
-		void MATHVM_API DrawLine(const FVector2D Point0, const FVector2D Point1, const FColor Color, TFunction<void(const int32 X, const int32 Y, const FColor Color)> DrawPixel);
 	}
 }
 

@@ -2,6 +2,7 @@
 
 
 #include "MathVMBlueprintFunctionLibrary.h"
+#include "Engine/Canvas.h"
 
 
 FMathVMTexture2DResource::FMathVMTexture2DResource(UTexture2D* Texture)
@@ -157,7 +158,7 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, const
 	return MathVM.ExecuteOne(LocalVariablesCopy, Result, Error);
 }
 
-void UMathVMBlueprintFunctionLibrary::MathVMPlotter(const FString& Code, const int32 NumSamples, const TMap<FString, FColor>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable, const int32 TextureWidth, const int32 TextureHeight)
+void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)
 {
 	if (Code.IsEmpty())
 	{
@@ -182,11 +183,20 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(const FString& Code, const i
 		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty Code");
 	}
 
-	if (TextureWidth < 1 || TextureHeight < 1)
+	if (PlotterConfig.TextureWidth < 1 || PlotterConfig.TextureHeight < 1)
 	{
 		OnTextureGenerated.ExecuteIfBound(nullptr, "Invalid texture size");
 		return;
 	}
+
+	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>();
+	if (!RenderTarget)
+	{
+		OnTextureGenerated.ExecuteIfBound(nullptr, "Unable to create CanvasRenderTarget2D");
+		return;
+	}
+
+	RenderTarget->InitAutoFormat(PlotterConfig.TextureWidth, PlotterConfig.TextureHeight);
 
 	FMathVM MathVM;
 	if (!MathVM.TokenizeAndCompile(Code))
@@ -195,40 +205,8 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(const FString& Code, const i
 		return;
 	}
 
-	FTexture2DMipMap* Mip = new FTexture2DMipMap();
-	Mip->SizeX = TextureWidth;
-	Mip->SizeY = TextureHeight;
-
-#if !WITH_EDITOR
-#if !NO_LOGGING
-	ELogVerbosity::Type CurrentLogSerializationVerbosity = LogSerialization.GetVerbosity();
-	bool bResetLogVerbosity = false;
-	if (CurrentLogSerializationVerbosity >= ELogVerbosity::Warning)
-	{
-		LogSerialization.SetVerbosity(ELogVerbosity::Error);
-		bResetLogVerbosity = true;
-	}
-#endif
-#endif
-
-#if !WITH_EDITOR
-	// this is a hack for allowing texture streaming without messing around with deriveddata
-	Mip->BulkData.SetBulkDataFlags(BULKDATA_PayloadInSeperateFile);
-#endif
-	Mip->BulkData.Lock(LOCK_READ_WRITE);
-
-#if !WITH_EDITOR
-#if !NO_LOGGING
-	if (bResetLogVerbosity)
-	{
-		LogSerialization.SetVerbosity(CurrentLogSerializationVerbosity);
-	}
-#endif
-#endif
-	const int32 PixelsSize = TextureWidth * TextureHeight * 4;
-
 	TMap<FString, TArray<FVector2D>> Points;
-	for (const TPair<FString, FColor>& Pair : VariablesToPlot)
+	for (const TPair<FString, FMathVMPlot>& Pair : VariablesToPlot)
 	{
 		TArray<FVector2D>& PointsCoordinates = Points.Add(Pair.Key);
 		// it is important to set it to invalid coordinates to avoid artifacts
@@ -241,88 +219,95 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(const FString& Code, const i
 
 	ParallelFor(NumSamples, [&](const int32 SampleIndex)
 		{
-			const double X = FMath::GetMappedRangeValueUnclamped(FVector2D(0, NumSamples - 1), FVector2D(0, TextureWidth - 1), SampleIndex);
+			const double X = FMath::GetMappedRangeValueUnclamped(FVector2D(0, NumSamples - 1), FVector2D(PlotterConfig.BorderSize.Left + PlotterConfig.BorderThickness, PlotterConfig.TextureWidth - 1 - PlotterConfig.BorderSize.Right - PlotterConfig.BorderThickness), SampleIndex);
 
 			TMap<FString, double> LocalVariables;
 			LocalVariables.Add(SampleLocalVariable, SampleIndex);
 
 			if (MathVM.ExecuteStealth(LocalVariables))
 			{
-				for (const TPair<FString, FColor>& Pair : VariablesToPlot)
+				for (const TPair<FString, FMathVMPlot>& Pair : VariablesToPlot)
 				{
 					if (LocalVariables.Contains(Pair.Key))
 					{
-						const double Y = FMath::GetMappedRangeValueUnclamped(FVector2D(DomainMin, DomainMax), FVector2D(0, TextureHeight - 1), FMath::Clamp(LocalVariables[Pair.Key], DomainMin, DomainMax));
-						Points[Pair.Key][SampleIndex] = FVector2D(X, (TextureHeight - 1) - Y);
-						UE_LOG(LogTemp, Error, TEXT("[%d] X: %d Y: %d [%f]"), SampleIndex, static_cast<int32>(X), static_cast<int32>(Y), LocalVariables[Pair.Key]);
+						const double Y = FMath::GetMappedRangeValueUnclamped(FVector2D(DomainMin, DomainMax), FVector2D(PlotterConfig.BorderSize.Bottom + PlotterConfig.BorderThickness, PlotterConfig.TextureHeight - 1 - PlotterConfig.BorderSize.Top - PlotterConfig.BorderThickness), FMath::Clamp(LocalVariables[Pair.Key], DomainMin, DomainMax));
+						Points[Pair.Key][SampleIndex] = FVector2D(X, (PlotterConfig.TextureHeight - 1 - PlotterConfig.BorderSize.Top - PlotterConfig.BorderThickness) - Y + PlotterConfig.BorderSize.Bottom + PlotterConfig.BorderThickness);
 					}
 				}
 			}
 		});
 
-	uint8* Data = reinterpret_cast<uint8*>(Mip->BulkData.Realloc(PixelsSize));
+	UCanvas* Canvas = nullptr;
+	FVector2D CanvasSize;
+	FDrawToRenderTargetContext DrawContext;
+	UKismetRenderingLibrary::BeginDrawCanvasToRenderTarget(WorldContextObject, RenderTarget, Canvas, CanvasSize, DrawContext);
 
-	FMemory::Memset(Data, 255, PixelsSize);
-
-	for (const TPair<FString, TArray<FVector2D>>& Pair : Points)
+	if (Canvas)
 	{
-		const FColor& Color = VariablesToPlot[Pair.Key];
+		UKismetRenderingLibrary::ClearRenderTarget2D(WorldContextObject, RenderTarget, PlotterConfig.BackgroundColor);
 
-		ParallelFor(NumSamples - 1, [&](const int32 SampleIndex)
+		Canvas->K2_DrawLine(PlotterConfig.BorderSize.GetTopLeft(), FVector2D(PlotterConfig.TextureWidth - PlotterConfig.BorderSize.Right, PlotterConfig.BorderSize.Top), PlotterConfig.BorderThickness, PlotterConfig.BorderColor);
+		Canvas->K2_DrawLine(PlotterConfig.BorderSize.GetTopLeft(), FVector2D(PlotterConfig.BorderSize.Left, PlotterConfig.TextureHeight - PlotterConfig.BorderSize.Bottom), PlotterConfig.BorderThickness, PlotterConfig.BorderColor);
+		Canvas->K2_DrawLine(FVector2D(PlotterConfig.TextureWidth - PlotterConfig.BorderSize.Right, PlotterConfig.BorderSize.Top), FVector2D(PlotterConfig.TextureWidth - PlotterConfig.BorderSize.Right, PlotterConfig.TextureHeight - PlotterConfig.BorderSize.Bottom), PlotterConfig.BorderThickness, PlotterConfig.BorderColor);
+		Canvas->K2_DrawLine(FVector2D(PlotterConfig.BorderSize.Left, PlotterConfig.TextureHeight - PlotterConfig.BorderSize.Bottom), FVector2D(PlotterConfig.TextureWidth - PlotterConfig.BorderSize.Right, PlotterConfig.TextureHeight - PlotterConfig.BorderSize.Bottom), PlotterConfig.BorderThickness, PlotterConfig.BorderColor);
+
+		if (PlotterConfig.GridVerticalScale > 0)
+		{
+			const double Step = ((PlotterConfig.TextureWidth - PlotterConfig.BorderSize.Left - PlotterConfig.BorderSize.Right - (PlotterConfig.BorderThickness * 2)) * PlotterConfig.GridVerticalScale) / (NumSamples - 1);
+			const int32 NumScaledSamples = NumSamples * (1.0 / PlotterConfig.GridVerticalScale);
+
+			for (int32 SampleIndex = 0; SampleIndex < NumScaledSamples; SampleIndex++)
 			{
-				const FVector2D& Point0 = Pair.Value[SampleIndex];
-				const FVector2D& Point1 = Pair.Value[SampleIndex + 1];
+				Canvas->K2_DrawLine(
+					FVector2D(PlotterConfig.BorderSize.Left + PlotterConfig.BorderThickness + (Step * SampleIndex), PlotterConfig.TextureHeight - PlotterConfig.BorderSize.Bottom - PlotterConfig.BorderThickness),
+					FVector2D(PlotterConfig.BorderSize.Left + PlotterConfig.BorderThickness + (Step * SampleIndex), PlotterConfig.BorderSize.Top + PlotterConfig.BorderThickness),
+					PlotterConfig.GridThickness, PlotterConfig.GridColor);
+			}
+		}
 
-				if (Point0.X < 0 || Point1.X < 0 || Point0.Y < 0 || Point1.Y < 0)
+		for (const TPair<FString, TArray<FVector2D>>& Pair : Points)
+		{
+			const FMathVMPlot& Plot = VariablesToPlot[Pair.Key];
+
+			if (Plot.Shape == EMathVMPlotterShape::Line || Plot.Shape == EMathVMPlotterShape::LineAndPoint)
+			{
+				for (int32 PointIndex = 0; PointIndex < Pair.Value.Num() - 1; PointIndex++)
 				{
-					return;
-				}
-
-				if (Point0.X >= TextureWidth || Point1.X >= TextureWidth || Point0.Y >= TextureHeight || Point1.Y >= TextureHeight)
-				{
-					return;
-				}
-
-				MathVM::Utils::DrawLine(Point0, Point1, Color, [Data, TextureWidth, TextureHeight](const int32 X, const int32 Y, const FColor Color)
+					const FVector2D& Point0 = Pair.Value[PointIndex];
+					const FVector2D& Point1 = Pair.Value[PointIndex + 1];
+					if (Point0.X < 0 || Point0.Y < 0 || Point1.X < 0 || Point1.Y < 0)
 					{
-						if (X < 0 || Y < 0)
-						{
-							return;
-						}
+						continue;
+					}
+					Canvas->K2_DrawLine(Point0, Point1, Plot.Thickness, Plot.Color);
+					if (Plot.Shape == EMathVMPlotterShape::LineAndPoint)
+					{
+						Canvas->K2_DrawBox(Point0 - FVector2D(Plot.Thickness, Plot.Thickness), FVector2D(Plot.Thickness, Plot.Thickness) * 2, Plot.Thickness * 2, Plot.Color2);
+					}
+				}
 
-						if (X >= TextureWidth || Y >= TextureHeight)
-						{
-							return;
-						}
-
-						const int32 Offset = (Y * TextureWidth + X) * 4;
-
-						const double Alpha = Color.A / 255.0;
-
-						Data[Offset] = (Alpha * (Color.B / 255.0) + (1.0 - Alpha)) * 255;
-						Data[Offset + 1] = (Alpha * (Color.G / 255.0) + (1.0 - Alpha)) * 255;
-						Data[Offset + 2] = (Alpha * (Color.R / 255.0) + (1.0 - Alpha)) * 255;
-						Data[Offset + 3] = 255;
-					});
-			});
+				if (Plot.Shape == EMathVMPlotterShape::LineAndPoint)
+				{
+					const FVector2D& Point0 = Pair.Value[Pair.Value.Num() - 1];
+					Canvas->K2_DrawBox(Point0 - FVector2D(Plot.Thickness, Plot.Thickness), FVector2D(Plot.Thickness, Plot.Thickness) * 2, Plot.Thickness * 2, Plot.Color2);
+				}
+			}
+			else if (Plot.Shape == EMathVMPlotterShape::Box)
+			{
+				for (int32 PointIndex = 0; PointIndex < Pair.Value.Num(); PointIndex++)
+				{
+					const FVector2D& Point = Pair.Value[PointIndex];
+					if (Point.X < 0 || Point.Y < 0)
+					{
+						continue;
+					}
+					Canvas->K2_DrawBox(Point - FVector2D(Plot.Thickness, Plot.Thickness) * 0.5, FVector2D(Plot.Thickness, Plot.Thickness), Plot.Thickness, Plot.Color);
+				}
+			}
+		}
 	}
 
-	Mip->BulkData.Unlock();
+	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(WorldContextObject, DrawContext);
 
-	UTexture2D* Texture = NewObject<UTexture2D>();
-
-	FTexturePlatformData* PlatformData = new FTexturePlatformData();
-	PlatformData->SizeX = TextureWidth;
-	PlatformData->SizeY = TextureHeight;
-	PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8;
-
-	PlatformData->Mips.Add(Mip);
-
-	Texture->SetPlatformData(PlatformData);
-
-	Texture->NeverStream = true;
-
-	Texture->UpdateResource();
-
-	OnTextureGenerated.ExecuteIfBound(Texture, "");
+	OnTextureGenerated.ExecuteIfBound(RenderTarget, "");
 }

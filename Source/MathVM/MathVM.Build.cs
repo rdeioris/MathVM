@@ -36,6 +36,7 @@ public class MathVM : ModuleRules
 			{
 				"CoreUObject",
 				"Engine",
+                "SlateCore"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
