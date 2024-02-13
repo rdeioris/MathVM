@@ -254,9 +254,9 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 		if (PlotterConfig.GridVerticalScale > 0)
 		{
 			const double Step = ((PlotterConfig.TextureWidth - PlotterConfig.BorderSize.Left - PlotterConfig.BorderSize.Right - (PlotterConfig.BorderThickness * 2)) * PlotterConfig.GridVerticalScale) / (NumSamples - 1);
-			const int32 NumScaledSamples = NumSamples * (1.0 / PlotterConfig.GridVerticalScale);
+			const int32 NumScaledSamples = (NumSamples - 1) / PlotterConfig.GridVerticalScale;
 
-			for (int32 SampleIndex = 0; SampleIndex < NumScaledSamples; SampleIndex++)
+			for (int32 SampleIndex = 0; SampleIndex < NumScaledSamples + 1; SampleIndex++)
 			{
 				Canvas->K2_DrawLine(
 					FVector2D(PlotterConfig.BorderSize.Left + PlotterConfig.BorderThickness + (Step * SampleIndex), PlotterConfig.TextureHeight - PlotterConfig.BorderSize.Bottom - PlotterConfig.BorderThickness),
