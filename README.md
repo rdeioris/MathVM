@@ -30,6 +30,12 @@ thread works on a different copy of them), global variables are shared between p
 
 ### abs(n)
 
+returns the absolute value of n.
+
 ### acos(n)
 
+returns the arccosine (inverse cosine) of n (in radians).
+
 ### all(...)
+
+returns 1 if all of the arguments are non 0. Otherwise returns 0.
