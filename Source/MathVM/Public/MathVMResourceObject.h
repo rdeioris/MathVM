@@ -10,7 +10,7 @@
 /**
  *
  */
-UCLASS()
+UCLASS(BlueprintType)
 class MATHVM_API UMathVMResourceObject : public UObject
 {
 	GENERATED_BODY()
