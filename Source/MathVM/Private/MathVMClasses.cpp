@@ -163,13 +163,11 @@ bool FMathVMBase::HasConst(const FString& Name) const
 
 void FMathVMBase::SetGlobalVariable(const FString& Name, const double Value)
 {
-	FRWScopeLock Lock(GlobalVariablesLock, FRWScopeLockType::SLT_Write);
 	GlobalVariables[Name] = Value;
 }
 
 double FMathVMBase::GetGlobalVariable(const FString& Name)
 {
-	FRWScopeLock Lock(GlobalVariablesLock, FRWScopeLockType::SLT_ReadOnly);
 	return GlobalVariables[Name];
 }
 

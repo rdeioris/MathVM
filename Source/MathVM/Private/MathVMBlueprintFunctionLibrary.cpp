@@ -2,6 +2,7 @@
 
 
 #include "MathVMBlueprintFunctionLibrary.h"
+#include "Async/ParallelFor.h"
 #include "Engine/Canvas.h"
 
 
@@ -82,6 +83,83 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, TMap<
 	}
 
 	return MathVM.ExecuteOne(LocalVariables, Result, Error);
+}
+
+void UMathVMBlueprintFunctionLibrary::MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads, const FString& ThreadIdLocalVariable)
+{
+	if (Code.IsEmpty())
+	{
+		OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult("Empty Code"));
+		return;
+	}
+
+	if (NumThreads < 1)
+	{
+		OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult("Invalid NumThreads"));
+		return;
+	}
+
+	if (ThreadIdLocalVariable.IsEmpty())
+	{
+		OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult("ThreadIdLocalVariable Code"));
+		return;
+	}
+
+	TSharedRef<FMathVM> MathVM = MakeShared<FMathVM>();
+
+	for (const TPair<FString, double>& Pair : GlobalVariables)
+	{
+		if (!MathVM->RegisterGlobalVariable(Pair.Key, Pair.Value))
+		{
+			OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(FString::Printf(TEXT("Unable to register global variable \"%s\""), *Pair.Key)));
+			return;
+		}
+	}
+
+	for (const TPair<FString, double>& Pair : Constants)
+	{
+		if (!MathVM->RegisterConst(Pair.Key, Pair.Value))
+		{
+			OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(FString::Printf(TEXT("Unable to register const \"%s\""), *Pair.Key)));
+			return;
+		}
+	}
+
+	FString RegisterResourcesError;
+	if (!MathVM::BlueprintUtility::RegisterResources(*MathVM, Resources, RegisterResourcesError))
+	{
+		OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(RegisterResourcesError));
+		return;
+	}
+
+	if (!MathVM->TokenizeAndCompile(Code))
+	{
+		OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(MathVM->GetError()));
+		return;
+	}
+
+	Async(EAsyncExecution::Thread, [MathVM, NumThreads, GlobalVariables, ThreadIdLocalVariable, OnEvaluated]()
+		{
+			ParallelFor(NumThreads, [&](const int32 ThreadId)
+				{
+					TMap<FString, double> LocalVariables;
+					LocalVariables.Add(ThreadIdLocalVariable, ThreadId);
+					MathVM->ExecuteStealth(LocalVariables);
+				});
+
+			FGraphEventRef Task = FFunctionGraphTask::CreateAndDispatchWhenReady([&]()
+				{
+					FMathVMEvaluationResult Result;
+					Result.bSuccess = true;
+					for (const TPair<FString, double>& Pair : GlobalVariables)
+					{
+						Result.GlobalVariables.Add(Pair.Key, MathVM->GetGlobalVariable(Pair.Key));
+					}
+
+					OnEvaluated.ExecuteIfBound(Result);
+				}, TStatId(), nullptr, ENamedThreads::GameThread);
+			FTaskGraphInterface::Get().WaitUntilTaskCompletes(Task);
+		});
 }
 
 void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)

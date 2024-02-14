@@ -96,6 +96,34 @@ struct FMathVMPlotterConfig
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FMathVMEvaluationResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bSuccess;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FString Error;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TMap<FString, int32> GlobalVariables;
+
+	FMathVMEvaluationResult()
+	{
+		bSuccess = false;
+	}
+
+	FMathVMEvaluationResult(const FString& InError)
+	{
+		bSuccess = false;
+		Error = InError;
+	}
+};
+
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FMathVMEvaluated, const bool, bSuccess, const FString&, Error);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FMathVMEvaluatedWithResult, const FMathVMEvaluationResult&, EvaluationResult);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FMathVMTextureGenerated, UTexture*, Texture, const FString&, Error);
 
 /**
@@ -115,6 +143,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "LocalVariables,Resources"), Category = "MathVM")
 	static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
+
+	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "GlobalVariables,Constants,Resources"), Category = "MathVM")
+	static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads = 1, const FString& ThreadIdLocalVariable = "i");
 
 	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Constants,GlobalVariables,Resources,PlotterConfig"), Category = "MathVM")
 	static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");

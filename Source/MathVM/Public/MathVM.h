@@ -8,6 +8,8 @@
 #define MATHVM_ARGS FMathVMCallContext& CallContext, const TArray<double>& Args
 #define MATHVM_LAMBDA [](MATHVM_ARGS) -> bool
 #define MATHVM_LAMBDA_THIS [this](MATHVM_ARGS) -> bool
+#define MATHVM_RETURN(x) return CallContext.PushResult(x)
+#define MATHVM_ERROR(x) return CallContext.SetError(x)
 
 enum class EMathVMTokenType : uint8
 {
@@ -18,7 +20,9 @@ enum class EMathVMTokenType : uint8
 	CloseParenthesis,
 	Comma,
 	Variable,
-	Semicolon
+	Semicolon,
+	Lock,
+	Unlock
 };
 
 class FMathVMBase;
@@ -179,11 +183,12 @@ protected:
 	TMap<FString, const double> Constants;
 
 	TMap<FString, double> GlobalVariables;
-	FRWLock GlobalVariablesLock;
 
 	TArray<TArray<const FMathVMToken*>> Statements;
 
 	TArray<TSharedPtr<IMathVMResource>> Resources;
+
+	FCriticalSection Lock;
 };
 
 class MATHVM_API FMathVM : public FMathVMBase

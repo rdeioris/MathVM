@@ -8,6 +8,7 @@ bool FMathVMBase::Compile()
 	TArray<const FMathVMToken*> OperatorStack;
 	TArray<int32> FunctionsArgsStack;
 	TArray<bool> FunctionHasFirstArgStack;
+	bool bLocked = false;
 
 	for (const FMathVMToken& Token : Tokens)
 	{
@@ -56,6 +57,34 @@ bool FMathVMBase::Compile()
 		else if (Token.TokenType == EMathVMTokenType::OpenParenthesis)
 		{
 			OperatorStack.Add(&Token);
+		}
+		else if (Token.TokenType == EMathVMTokenType::Lock)
+		{
+			if (!OperatorStack.IsEmpty())
+			{
+				return SetError("Unexpected Lock");
+			}
+
+			if (bLocked)
+			{
+				return SetError("Lock without Unlock");
+			}
+			bLocked = true;
+			Statements.Add({ &Token });
+		}
+		else if (Token.TokenType == EMathVMTokenType::Unlock)
+		{
+			if (!OperatorStack.IsEmpty())
+			{
+				return SetError("Unexpected Unlock");
+			}
+
+			if (!bLocked)
+			{
+				return SetError("Unlock without Lock");
+			}
+			bLocked = false;
+			Statements.Add({ &Token });
 		}
 		else if (Token.TokenType == EMathVMTokenType::CloseParenthesis)
 		{
@@ -113,6 +142,11 @@ bool FMathVMBase::Compile()
 		OutputQueue.Add(OperatorStack.Pop(false));
 	}
 	Statements.Add(OutputQueue);
+
+	if (bLocked)
+	{
+		return SetError("Lock without Unlock");
+	}
 
 	return true;
 }

@@ -197,6 +197,22 @@ bool FMathVMBase::Tokenize(const FString& Code)
 			}
 			NumberMultiplier = 1;
 		}
+		else if (Char == '{')
+		{
+			if (!CheckAndResetAccumulator() || !AddToken(FMathVMToken(EMathVMTokenType::Lock)))
+			{
+				return false;
+			}
+			NumberMultiplier = 1;
+		}
+		else if (Char == '}')
+		{
+			if (!CheckAndResetAccumulator() || !AddToken(FMathVMToken(EMathVMTokenType::Unlock)))
+			{
+				return false;
+			}
+			NumberMultiplier = 1;
+			}
 		else if (Char == ',')
 		{
 			if (!CheckAndResetAccumulator() || !AddToken(FMathVMToken(EMathVMTokenType::Comma)))

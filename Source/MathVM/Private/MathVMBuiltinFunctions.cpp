@@ -6,12 +6,12 @@ namespace MathVM
 	{
 		bool Abs(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Abs(Args[0]));
+			MATHVM_RETURN(FMath::Abs(Args[0]));
 		}
 
 		bool ACos(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Acos(Args[0]));
+			MATHVM_RETURN(FMath::Acos(Args[0]));
 		}
 
 		bool All(MATHVM_ARGS)
@@ -20,10 +20,10 @@ namespace MathVM
 			{
 				if (Value == 0.0)
 				{
-					return CallContext.PushResult(0);
+					MATHVM_RETURN(0);
 				}
 			}
-			return CallContext.PushResult(1);
+			MATHVM_RETURN(1);
 		}
 
 		bool Any(MATHVM_ARGS)
@@ -32,52 +32,52 @@ namespace MathVM
 			{
 				if (Value != 0.0)
 				{
-					return CallContext.PushResult(1);
+					MATHVM_RETURN(1);
 				}
 			}
-			return CallContext.PushResult(0);
+			MATHVM_RETURN(0);
 		}
 
 		bool ASin(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Asin(Args[0]));
+			MATHVM_RETURN(FMath::Asin(Args[0]));
 		}
 
 		bool ATan(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Atan(Args[0]));
+			MATHVM_RETURN(FMath::Atan(Args[0]));
 		}
 
 		bool Ceil(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::CeilToDouble(Args[0]));
+			MATHVM_RETURN(FMath::CeilToDouble(Args[0]));
 		}
 
 		bool Clamp(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Clamp(Args[0], Args[1], Args[2]));
+			MATHVM_RETURN(FMath::Clamp(Args[0], Args[1], Args[2]));
 		}
 
 		bool Cos(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Cos(Args[0]));
+			MATHVM_RETURN(FMath::Cos(Args[0]));
 		}
 
 		bool Degrees(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::RadiansToDegrees(Args[0]));
+			MATHVM_RETURN(FMath::RadiansToDegrees(Args[0]));
 		}
 
 		bool Distance(MATHVM_ARGS)
 		{
 			if (Args.Num() < 2)
 			{
-				return CallContext.SetError("distance expects at least 2 arguments");
+				MATHVM_ERROR("distance expects at least 2 arguments");
 			}
 
 			if (Args.Num() % 2 != 0)
 			{
-				return CallContext.SetError("distance number of arguments must be even");
+				MATHVM_ERROR("distance number of arguments must be even");
 			}
 
 			const int32 NumElements = Args.Num() / 2;
@@ -97,19 +97,19 @@ namespace MathVM
 				TotalLength += Values[ElementIndex] * Values[ElementIndex];
 			}
 
-			return CallContext.PushResult(FMath::Sqrt(TotalLength));
+			MATHVM_RETURN(FMath::Sqrt(TotalLength));
 		}
 
 		bool Dot(MATHVM_ARGS)
 		{
 			if (Args.Num() < 2)
 			{
-				return CallContext.SetError("dot expects at least 2 arguments");
+				MATHVM_ERROR("dot expects at least 2 arguments");
 			}
 
 			if (Args.Num() % 2 != 0)
 			{
-				return CallContext.SetError("dot number of arguments must be even");
+				MATHVM_ERROR("dot number of arguments must be even");
 			}
 
 			const int32 NumElements = Args.Num() / 2;
@@ -121,42 +121,42 @@ namespace MathVM
 				Total += Args[ElementIndex] * Args[NumElements + ElementIndex];
 			}
 
-			return CallContext.PushResult(Total);
+			MATHVM_RETURN(Total);
 		}
 
 		bool Equal(MATHVM_ARGS)
 		{
 			if (Args.Num() < 2)
 			{
-				return CallContext.SetError("equal expects at least 2 arguments");
+				MATHVM_ERROR("equal expects at least 2 arguments");
 			}
 
 			for (int32 ArgIndex = 1; ArgIndex < Args.Num(); ArgIndex++)
 			{
 				if (Args[ArgIndex] != Args[0])
 				{
-					return CallContext.PushResult(0);
+					MATHVM_RETURN(0);
 				}
 			}
 
-			return CallContext.PushResult(1);
+			MATHVM_RETURN(1);
 		}
 
 		bool Exp(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Exp(Args[0]));
+			MATHVM_RETURN(FMath::Exp(Args[0]));
 		}
 
 		bool Exp2(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Exp2(Args[0]));
+			MATHVM_RETURN(FMath::Exp2(Args[0]));
 		}
 
 		bool Gradient(MATHVM_ARGS)
 		{
 			if (Args.Num() < 5)
 			{
-				return CallContext.SetError("gradient expects at least 5 arguments");
+				MATHVM_ERROR("gradient expects at least 5 arguments");
 			}
 
 			if ((Args.Num() - 1) % 2 != 0)
@@ -210,42 +210,42 @@ namespace MathVM
 			const double Delta = Value - Ranges[FoundRangeIndex].Key;
 			const double Fraction = Delta / (Ranges[FoundRangeIndex + 1].Key - Ranges[FoundRangeIndex].Key);
 
-			return CallContext.PushResult(FMath::Lerp(Ranges[FoundRangeIndex].Value, Ranges[FoundRangeIndex + 1].Value, Fraction));
+			MATHVM_RETURN(FMath::Lerp(Ranges[FoundRangeIndex].Value, Ranges[FoundRangeIndex + 1].Value, Fraction));
 		}
 
 		bool Floor(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Floor(Args[0]));
+			MATHVM_RETURN(FMath::Floor(Args[0]));
 		}
 
 		bool Fract(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Fractional(Args[0]));
+			MATHVM_RETURN(FMath::Fractional(Args[0]));
 		}
 
 		bool GreaterThan(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(Args[0] > Args[1] ? 1 : 0);
+			MATHVM_RETURN(Args[0] > Args[1] ? 1 : 0);
 		}
 
 		bool GreaterEqual(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(Args[0] >= Args[1] ? 1 : 0);
+			MATHVM_RETURN(Args[0] >= Args[1] ? 1 : 0);
 		}
 
 		bool Hue2B(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Clamp(2 - FMath::Abs(Args[0] * 6 - 4), 0, 1));
+			MATHVM_RETURN(FMath::Clamp(2 - FMath::Abs(Args[0] * 6 - 4), 0, 1));
 		}
 
 		bool Hue2G(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Clamp(2 - FMath::Abs(Args[0] * 6 - 2), 0, 1));
+			MATHVM_RETURN(FMath::Clamp(2 - FMath::Abs(Args[0] * 6 - 2), 0, 1));
 		}
 
 		bool Hue2R(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Clamp(FMath::Abs(Args[0] * 6 - 3) - 1, 0, 1));
+			MATHVM_RETURN(FMath::Clamp(FMath::Abs(Args[0] * 6 - 3) - 1, 0, 1));
 		}
 
 		bool Length(MATHVM_ARGS)
@@ -256,44 +256,44 @@ namespace MathVM
 				TotalLength += Arg;
 			}
 
-			return CallContext.PushResult(FMath::Sqrt(TotalLength));
+			MATHVM_RETURN(FMath::Sqrt(TotalLength));
 		}
 
 		bool Lerp(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Lerp(Args[0], Args[1], Args[2]));
+			MATHVM_RETURN(FMath::Lerp(Args[0], Args[1], Args[2]));
 		}
 
 		bool LessThan(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(Args[0] < Args[1] ? 1 : 0);
+			MATHVM_RETURN(Args[0] < Args[1] ? 1 : 0);
 		}
 
 		bool LessEqual(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(Args[0] <= Args[1] ? 1 : 0);
+			MATHVM_RETURN(Args[0] <= Args[1] ? 1 : 0);
 		}
 
 		bool Log(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Loge(Args[0]));
+			MATHVM_RETURN(FMath::Loge(Args[0]));
 		}
 
 		bool Log2(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Log2(Args[0]));
+			MATHVM_RETURN(FMath::Log2(Args[0]));
 		}
 
 		bool Map(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::GetMappedRangeValueUnclamped(FVector2D(Args[1], Args[2]), FVector2D(Args[3], Args[4]), Args[0]));
+			MATHVM_RETURN(FMath::GetMappedRangeValueUnclamped(FVector2D(Args[1], Args[2]), FVector2D(Args[3], Args[4]), Args[0]));
 		}
 
 		bool Max(MATHVM_ARGS)
 		{
 			if (Args.Num() < 2)
 			{
-				return CallContext.SetError("max expects at least 2 arguments");
+				MATHVM_ERROR("max expects at least 2 arguments");
 			};
 
 			double MaxValue = FMath::Max(Args[0], Args[1]);
@@ -302,14 +302,14 @@ namespace MathVM
 				MaxValue = FMath::Max(MaxValue, Args[ArgIndex]);
 			}
 
-			return CallContext.PushResult(MaxValue);
+			MATHVM_RETURN(MaxValue);
 		}
 
 		bool Min(MATHVM_ARGS)
 		{
 			if (Args.Num() < 2)
 			{
-				return CallContext.SetError("min expects at least 2 arguments");
+				MATHVM_ERROR("min expects at least 2 arguments");
 			};
 
 			double MinValue = FMath::Min(Args[0], Args[1]);
@@ -318,73 +318,73 @@ namespace MathVM
 				MinValue = FMath::Min(MinValue, Args[ArgIndex]);
 			}
 
-			return CallContext.PushResult(MinValue);
+			MATHVM_RETURN(MinValue);
 		}
 
 		bool Mod(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Fmod(Args[0], Args[1]));
+			MATHVM_RETURN(FMath::Fmod(Args[0], Args[1]));
 		}
 
 		bool Not(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(Args[0] == 0.0 ? 1 : 0);
+			MATHVM_RETURN(Args[0] == 0.0 ? 1 : 0);
 		}
 
 		bool Pow(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Pow(Args[0], Args[1]));
+			MATHVM_RETURN(FMath::Pow(Args[0], Args[1]));
 		}
 
 		bool Radians(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::DegreesToRadians(Args[0]));
+			MATHVM_RETURN(FMath::DegreesToRadians(Args[0]));
 		}
 
 		bool Rand(MATHVM_ARGS)
 		{
 			static FRandomStream RandomStream;
-			return CallContext.PushResult(RandomStream.FRandRange(Args[0], Args[1]));
+			MATHVM_RETURN(RandomStream.FRandRange(Args[0], Args[1]));
 		}
 
 		bool Round(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::RoundToDouble(Args[0]));
+			MATHVM_RETURN(FMath::RoundToDouble(Args[0]));
 		}
 
 		bool RoundEven(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::RoundHalfToEven(Args[0]));
+			MATHVM_RETURN(FMath::RoundHalfToEven(Args[0]));
 		}
 
 		bool Sign(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Sign(Args[0]));
+			MATHVM_RETURN(FMath::Sign(Args[0]));
 		}
 
 		bool Sin(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Sin(Args[0]));
+			MATHVM_RETURN(FMath::Sin(Args[0]));
 		}
 
 		bool Sqrt(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Sqrt(Args[0]));
+			MATHVM_RETURN(FMath::Sqrt(Args[0]));
 		}
 
 		bool Step(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(Args[1] < Args[0] ? 0 : 1);
+			MATHVM_RETURN(Args[1] < Args[0] ? 0 : 1);
 		}
 
 		bool Tan(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::Tan(Args[0]));
+			MATHVM_RETURN(FMath::Tan(Args[0]));
 		}
 
 		bool Trunc(MATHVM_ARGS)
 		{
-			return CallContext.PushResult(FMath::TruncToDouble(Args[0]));
+			MATHVM_RETURN(FMath::TruncToDouble(Args[0]));
 		}
 
 		// Resources
@@ -393,7 +393,7 @@ namespace MathVM
 		{
 			if (Args.Num() < 1)
 			{
-				return CallContext.SetError("read expects at least 1 argument");
+				MATHVM_ERROR("read expects at least 1 argument");
 			};
 
 			TArray<double> InterfaceArgs;
@@ -402,14 +402,14 @@ namespace MathVM
 				InterfaceArgs.Add(Args[Index]);
 			}
 
-			return CallContext.PushResult(CallContext.ReadResource(static_cast<int32>(Args[0]), InterfaceArgs));
+			MATHVM_RETURN(CallContext.ReadResource(static_cast<int32>(Args[0]), InterfaceArgs));
 		}
 
 		bool Write(MATHVM_ARGS)
 		{
 			if (Args.Num() < 1)
 			{
-				return CallContext.SetError("write expects at least 1 argument");
+				MATHVM_ERROR("write expects at least 1 argument");
 			};
 
 			TArray<double> InterfaceArgs;

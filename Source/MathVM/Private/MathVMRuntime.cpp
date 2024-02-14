@@ -43,6 +43,14 @@ bool FMathVMBase::ExecuteStatement(FMathVMCallContext& CallContext, const TArray
 				return false;
 			}
 		}
+		else if (Token->TokenType == EMathVMTokenType::Lock)
+		{
+			Lock.Lock();
+		}
+		else if (Token->TokenType == EMathVMTokenType::Unlock)
+		{
+			Lock.Unlock();
+		}
 		else
 		{
 			CallContext.Stack.Add(Token);
