@@ -61,7 +61,21 @@ UMathVMResourceObject* UMathVMBlueprintFunctionLibrary::MathVMResourceObjectFrom
 	return NewResourceObject;
 }
 
-bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error)
+UMathVMResourceObject* UMathVMBlueprintFunctionLibrary::MathVMResourceObjectAsDoubleArray(const int32 ArraySize)
+{
+	if (ArraySize <= 0)
+	{
+		return nullptr;
+	}
+
+	UMathVMResourceObject* NewResourceObject = NewObject<UMathVMResourceObject>();
+
+	NewResourceObject->SetMathVMResource(MakeShared<FMathVMDoubleArrayResource>(ArraySize));
+
+	return NewResourceObject;
+}
+
+bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error)
 {
 	if (Code.IsEmpty())
 	{

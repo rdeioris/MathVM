@@ -135,11 +135,14 @@ class MATHVM_API UMathVMBlueprintFunctionLibrary : public UBlueprintFunctionLibr
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MathVM")
+	UFUNCTION(BlueprintCallable, Category = "MathVM")
 	static UMathVMResourceObject* MathVMResourceObjectFromTexture2D(UTexture2D* Texture);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "MathVM")
+	UFUNCTION(BlueprintCallable, Category = "MathVM")
 	static UMathVMResourceObject* MathVMResourceObjectFromCurveBase(UCurveBase* Curve);
+
+	UFUNCTION(BlueprintCallable, Category = "MathVM")
+	static UMathVMResourceObject* MathVMResourceObjectAsDoubleArray(const int32 ArraySize);
 
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "LocalVariables,Resources"), Category = "MathVM")
 	static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
