@@ -51,6 +51,32 @@ struct FMathVMPlot
 };
 
 USTRUCT(BlueprintType)
+struct FMathVMText
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MathVM")
+	FString Text;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MathVM")
+	FVector2D Position;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MathVM")
+	FLinearColor Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MathVM")
+	UFont* Font;
+
+	
+	FMathVMText()
+	{
+		Color = FLinearColor::Black;
+		Position = FVector2D::ZeroVector;
+		Font = nullptr;
+	}
+};
+
+USTRUCT(BlueprintType)
 struct FMathVMPlotterConfig
 {
 	GENERATED_BODY()
@@ -150,6 +176,6 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "GlobalVariables,Constants,Resources"), Category = "MathVM")
 	static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads = 1, const FString& ThreadIdLocalVariable = "i");
 
-	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "Constants,GlobalVariables,Resources,PlotterConfig"), Category = "MathVM")
-	static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject", AutoCreateRefTerm = "TextsToPlot,Constants,GlobalVariables,Resources,PlotterConfig"), Category = "MathVM")
+	static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
 };

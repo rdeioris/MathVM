@@ -176,7 +176,7 @@ void UMathVMBlueprintFunctionLibrary::MathVMRun(const FString& Code, const TMap<
 		});
 }
 
-void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)
+void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)
 {
 	if (Code.IsEmpty())
 	{
@@ -331,6 +331,17 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 				}
 			}
 		}
+
+		for (const FMathVMText& Text : TextsToPlot)
+		{
+			UFont* Font = Text.Font;
+			if (!Font)
+			{
+				Font = GEngine->GetTinyFont();
+			}
+			Canvas->K2_DrawText(Font, Text.Text, Text.Position* FVector2D(PlotterConfig.TextureWidth, PlotterConfig.TextureHeight), FVector2D(1, 1), Text.Color);
+		}
+		
 	}
 
 	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(WorldContextObject, DrawContext);
