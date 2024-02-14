@@ -80,8 +80,6 @@ public:
 	virtual ~IMathVMResource() = default;
 	virtual double Read(const TArray<double>& Args) const = 0;
 	virtual void Write(const TArray<double>& Args) = 0;
-protected:
-	FRWLock ResourceLock;
 };
 
 namespace MathVM

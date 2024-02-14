@@ -31,3 +31,14 @@ public:
 protected:
 	TArray<FRichCurveEditInfo> Curves;
 };
+
+class MATHVM_API FMathVMDoubleArrayResource : public IMathVMResource
+{
+public:
+	FMathVMDoubleArrayResource(const int32 ArraySize);
+	virtual double Read(const TArray<double>& Args) const override;
+	virtual void Write(const TArray<double>& Args) override;
+
+protected:
+	TArray<double> Data;
+};

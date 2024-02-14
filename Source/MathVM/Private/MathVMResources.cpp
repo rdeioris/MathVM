@@ -121,3 +121,36 @@ void FMathVMCurveBaseResource::Write(const TArray<double>& Args)
 {
 
 }
+
+FMathVMDoubleArrayResource::FMathVMDoubleArrayResource(const int32 ArraySize)
+{
+	Data.AddZeroed(ArraySize);
+}
+
+double FMathVMDoubleArrayResource::Read(const TArray<double>& Args) const
+{
+	if (Args.Num() < 1)
+	{
+		return 0;
+	}
+
+	if (Data.IsValidIndex(Args[0]))
+	{
+		return Data[Args[0]];
+	}
+
+	return 0;
+}
+
+void FMathVMDoubleArrayResource::Write(const TArray<double>& Args)
+{
+	if (Args.Num() < 2)
+	{
+		return;
+	}
+
+	if (Data.IsValidIndex(Args[0]))
+	{
+		Data[Args[0]] = Args[1];
+	}
+}
