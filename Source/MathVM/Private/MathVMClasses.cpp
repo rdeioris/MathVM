@@ -166,9 +166,14 @@ void FMathVMBase::SetGlobalVariable(const FString& Name, const double Value)
 	GlobalVariables[Name] = Value;
 }
 
-double FMathVMBase::GetGlobalVariable(const FString& Name)
+double FMathVMBase::GetGlobalVariable(const FString& Name) const
 {
 	return GlobalVariables[Name];
+}
+
+const TMap<FString, double>& FMathVMBase::GetGlobalVariables() const
+{
+	return GlobalVariables;
 }
 
 double FMathVMBase::GetConst(const FString& Name)

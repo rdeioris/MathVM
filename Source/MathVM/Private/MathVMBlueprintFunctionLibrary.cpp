@@ -121,20 +121,20 @@ void UMathVMBlueprintFunctionLibrary::MathVMRun(const FString& Code, const TMap<
 
 	TSharedRef<FMathVM> MathVM = MakeShared<FMathVM>();
 
-	for (const TPair<FString, double>& Pair : GlobalVariables)
-	{
-		if (!MathVM->RegisterGlobalVariable(Pair.Key, Pair.Value))
-		{
-			OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(FString::Printf(TEXT("Unable to register global variable \"%s\""), *Pair.Key)));
-			return;
-		}
-	}
-
 	for (const TPair<FString, double>& Pair : Constants)
 	{
 		if (!MathVM->RegisterConst(Pair.Key, Pair.Value))
 		{
 			OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(FString::Printf(TEXT("Unable to register const \"%s\""), *Pair.Key)));
+			return;
+		}
+	}
+
+	for (const TPair<FString, double>& Pair : GlobalVariables)
+	{
+		if (!MathVM->RegisterGlobalVariable(Pair.Key, Pair.Value))
+		{
+			OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(FString::Printf(TEXT("Unable to register global variable \"%s\""), *Pair.Key)));
 			return;
 		}
 	}
@@ -163,63 +163,74 @@ void UMathVMBlueprintFunctionLibrary::MathVMRun(const FString& Code, const TMap<
 
 			FGraphEventRef Task = FFunctionGraphTask::CreateAndDispatchWhenReady([&]()
 				{
-					FMathVMEvaluationResult Result;
-					Result.bSuccess = true;
-					for (const TPair<FString, double>& Pair : GlobalVariables)
-					{
-						Result.GlobalVariables.Add(Pair.Key, MathVM->GetGlobalVariable(Pair.Key));
-					}
-
-					OnEvaluated.ExecuteIfBound(Result);
+					OnEvaluated.ExecuteIfBound(FMathVMEvaluationResult(MathVM->GetGlobalVariables()));
 				}, TStatId(), nullptr, ENamedThreads::GameThread);
 			FTaskGraphInterface::Get().WaitUntilTaskCompletes(Task);
 		});
 }
 
-void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMTextureGenerated& OnTextureGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)
+void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, const TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMPlotGenerated& OnPlotGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin, const double DomainMax, const FString& SampleLocalVariable)
 {
 	if (Code.IsEmpty())
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty Code");
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Empty Code"));
 		return;
 	}
 
 	if (NumSamples < 1)
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, "Invalid number of samples");
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Invalid number of samples"));
 		return;
 	}
 
 	if (VariablesToPlot.IsEmpty())
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty VariablesToPlot");
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Empty VariablesToPlot"));
 		return;
 	}
 
 	if (SampleLocalVariable.IsEmpty())
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, "Empty Code");
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Empty Code"));
 	}
 
 	if (PlotterConfig.TextureWidth < 1 || PlotterConfig.TextureHeight < 1)
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, "Invalid texture size");
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Invalid texture size"));
 		return;
 	}
 
 	FMathVM MathVM;
 
+	for (const TPair<FString, double>& Const : Constants)
+	{
+		if (!MathVM.RegisterConst(Const.Key, Const.Value))
+		{
+			OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Invalid constants"));
+			return;
+		}
+	}
+
+	for (const TPair<FString, double>& GlobalVariable : GlobalVariables)
+	{
+		if (!MathVM.RegisterGlobalVariable(GlobalVariable.Key, GlobalVariable.Value))
+		{
+			OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Invalid global variables"));
+			return;
+		}
+	}
+
 	FString RegisterResourcesError;
 	if (!MathVM::BlueprintUtility::RegisterResources(MathVM, Resources, RegisterResourcesError))
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, RegisterResourcesError);
+		OnPlotGenerated.ExecuteIfBound(nullptr, RegisterResourcesError);
 		return;
 	}
 
 	UTextureRenderTarget2D* RenderTarget = NewObject<UTextureRenderTarget2D>();
 	if (!RenderTarget)
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, "Unable to create CanvasRenderTarget2D");
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult("Unable to create CanvasRenderTarget2D"));
 		return;
 	}
 
@@ -227,7 +238,7 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 
 	if (!MathVM.TokenizeAndCompile(Code))
 	{
-		OnTextureGenerated.ExecuteIfBound(nullptr, MathVM.GetError());
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult(MathVM.GetError()));
 		return;
 	}
 
@@ -243,6 +254,8 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 		}
 	}
 
+	FString ErrorZero;
+
 	ParallelFor(NumSamples, [&](const int32 SampleIndex)
 		{
 			const double X = FMath::GetMappedRangeValueUnclamped(FVector2D(0, NumSamples - 1), FVector2D(PlotterConfig.BorderSize.Left + PlotterConfig.BorderThickness, PlotterConfig.TextureWidth - 1 - PlotterConfig.BorderSize.Right - PlotterConfig.BorderThickness), SampleIndex);
@@ -250,7 +263,17 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 			TMap<FString, double> LocalVariables;
 			LocalVariables.Add(SampleLocalVariable, SampleIndex);
 
-			if (MathVM.ExecuteStealth(LocalVariables))
+			bool bSuccess = false;
+			if (SampleIndex == 0)
+			{
+				bSuccess = MathVM.ExecuteAndDiscard(LocalVariables, ErrorZero);
+			}
+			else
+			{
+				bSuccess = MathVM.ExecuteStealth(LocalVariables);
+			}
+
+			if (bSuccess)
 			{
 				for (const TPair<FString, FMathVMPlot>& Pair : VariablesToPlot)
 				{
@@ -263,6 +286,13 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 			}
 		});
 
+	if (!ErrorZero.IsEmpty())
+	{
+		OnPlotGenerated.ExecuteIfBound(nullptr, FMathVMEvaluationResult(ErrorZero));
+		return;
+	}
+
+	FMathVMEvaluationResult Result(MathVM.GetGlobalVariables());
 	UCanvas* Canvas = nullptr;
 	FVector2D CanvasSize;
 	FDrawToRenderTargetContext DrawContext;
@@ -339,12 +369,19 @@ void UMathVMBlueprintFunctionLibrary::MathVMPlotter(UObject* WorldContextObject,
 			{
 				Font = GEngine->GetTinyFont();
 			}
-			Canvas->K2_DrawText(Font, Text.Text, Text.Position* FVector2D(PlotterConfig.TextureWidth, PlotterConfig.TextureHeight), FVector2D(1, 1), Text.Color);
+
+			FString TextContent = Text.Text;
+			for (const TPair<FString, double>& GlobalVariable : Result.GlobalVariables)
+			{
+				TextContent = TextContent.Replace(*FString("{" + GlobalVariable.Key + "}"), *FString::SanitizeFloat(GlobalVariable.Value));
+			}
+
+			Canvas->K2_DrawText(Font, TextContent, Text.Position * FVector2D(PlotterConfig.TextureWidth, PlotterConfig.TextureHeight), Text.Scaling, Text.Color);
 		}
-		
+
 	}
 
 	UKismetRenderingLibrary::EndDrawCanvasToRenderTarget(WorldContextObject, DrawContext);
 
-	OnTextureGenerated.ExecuteIfBound(RenderTarget, "");
+	OnPlotGenerated.ExecuteIfBound(RenderTarget, Result);
 }

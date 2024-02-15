@@ -132,11 +132,13 @@ public:
 	bool HasGlobalVariable(const FString& Name) const;
 
 	void SetGlobalVariable(const FString& Name, const double Value);
-	double GetGlobalVariable(const FString& Name);
+	double GetGlobalVariable(const FString& Name) const;
 
 	int32 RegisterResource(TSharedPtr<IMathVMResource> Resource);
 
 	TSharedPtr<IMathVMResource> GetResource(const int32 Index) const;
+
+	const TMap<FString, double>& GetGlobalVariables() const;
 
 protected:
 

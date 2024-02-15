@@ -187,6 +187,7 @@ bool FMathVMCallContext::PopArgument(double& Value)
 			return true;
 		}
 
+		SetError(FString::Printf(TEXT("Unknown symbol \"%s\""), *Token->Value));
 		return false;
 	}
 
@@ -196,6 +197,7 @@ bool FMathVMCallContext::PopArgument(double& Value)
 		return true;
 	}
 
+	SetError("Stack corruption detected");
 	return false;
 }
 
@@ -214,6 +216,7 @@ bool FMathVMCallContext::PopName(FString& Name)
 		return true;
 	}
 
+	SetError("Stack corruption detected");
 	return false;
 }
 
