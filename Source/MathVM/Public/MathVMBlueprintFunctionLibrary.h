@@ -12,7 +12,7 @@ namespace MathVM
 {
 	namespace BlueprintUtility
 	{
-		bool RegisterResources(FMathVM& MathVM, const TArray<UMathVMResourceObject*>& Resources, FString& Error);
+		MATHVM_API bool RegisterResources(FMathVM& MathVM, const TArray<UMathVMResourceObject*>& Resources, FString& Error);
 	}
 }
 
