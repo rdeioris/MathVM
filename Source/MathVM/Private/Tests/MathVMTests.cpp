@@ -23,6 +23,17 @@ bool FMathVMTest_Empty::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Garbage, "MathVM.Garbage", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Garbage::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+
+	TestFalse(TEXT("bSuccess"), MathVM.TokenizeAndCompile("?"));
+
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Add, "MathVM.Add", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool FMathVMTest_Add::RunTest(const FString& Parameters)

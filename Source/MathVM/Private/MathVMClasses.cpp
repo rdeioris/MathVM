@@ -254,6 +254,12 @@ TSharedPtr<IMathVMResource> FMathVMBase::GetResource(const int32 Index) const
 	return nullptr;
 }
 
+void FMathVMBase::Reset()
+{
+	Tokens.Empty();
+	Statements.Empty();
+}
+
 FMathVM::FMathVM()
 {
 	RegisterFunction("abs", MathVM::BuiltinFunctions::Abs, MathVM::BuiltinFunctions::AbsArgs);

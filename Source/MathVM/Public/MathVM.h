@@ -135,6 +135,8 @@ public:
 
 	const TMap<FString, double>& GetGlobalVariables() const;
 
+	void Reset();
+
 protected:
 
 	bool SetError(const FString& InError);
