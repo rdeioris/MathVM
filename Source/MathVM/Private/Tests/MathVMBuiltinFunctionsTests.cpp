@@ -777,4 +777,148 @@ bool MathVMBuiltinFunctions_GreaterEqualNot::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Rand, "MathVMBuiltinFunctions.Rand", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Rand::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("rand(0, 1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestTrue(TEXT("Result"), Result >= 0.0 && Result <= 1.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_RandZero, "MathVMBuiltinFunctions.RandZero", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_RandZero::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("rand(0, 0)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 0.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_ASin, "MathVMBuiltinFunctions.ASin", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_ASin::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("asin(1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.5707963267948966);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Map, "MathVMBuiltinFunctions.Map", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Map::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("map(0.5, 0, 100, 1, 200)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 150.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Distance, "MathVMBuiltinFunctions.Distance", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Distance::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("distance(2, 2, 2, 3, 3, 3)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.7320508075688772);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Dot, "MathVMBuiltinFunctions.Dot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Dot::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("dot(1, 0, 0, 1, 0, 0)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Log, "MathVMBuiltinFunctions.Log", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Log::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("log(10)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 2.302585092994046);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Log2, "MathVMBuiltinFunctions.Log2", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Log2::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("log2(10)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 3.321928094887362);
+
+	return true;
+}
 #endif

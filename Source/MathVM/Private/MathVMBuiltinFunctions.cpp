@@ -286,7 +286,7 @@ namespace MathVM
 
 		bool Map(MATHVM_ARGS)
 		{
-			MATHVM_RETURN(FMath::GetMappedRangeValueUnclamped(FVector2D(Args[1], Args[2]), FVector2D(Args[3], Args[4]), Args[0]));
+			MATHVM_RETURN(FMath::GetMappedRangeValueUnclamped(FVector2D(Args[1], Args[3]), FVector2D(Args[2], Args[4]), Args[0]));
 		}
 
 		bool Max(MATHVM_ARGS)
