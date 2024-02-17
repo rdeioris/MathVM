@@ -163,4 +163,47 @@ bool FMathVMTest_CommentNewLine::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Multi, "MathVM.Multi", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Multi::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("1;2;3");
+
+	TMap<FString, double> LocalVariables;
+	TArray<double> Results;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.Execute(LocalVariables, 3, Results, Error));
+
+	TestEqual(TEXT("Results"), Results.Num(), 3);
+
+	TestEqual(TEXT("Result[0]"), Results[0], 3.0);
+	TestEqual(TEXT("Result[1]"), Results[1], 2.0);
+	TestEqual(TEXT("Result[2]"), Results[2], 1.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_ParallelWithLock, "MathVM.ParallelWithLock", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_ParallelWithLock::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.RegisterGlobalVariable("x", 0);
+	MathVM.TokenizeAndCompile("{x = x + i;}");
+
+	ParallelFor(10, [&](const int32 Index)
+		{
+			TMap<FString, double> LocalVariables;
+			LocalVariables.Add("i", Index);
+
+			MathVM.ExecuteStealth(LocalVariables);
+		});
+
+	TestEqual(TEXT("x"), MathVM.GetGlobalVariable("x"), 45.0);
+
+	return true;
+}
+
 #endif

@@ -921,4 +921,130 @@ bool MathVMBuiltinFunctions_Log2::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Tan, "MathVMBuiltinFunctions.Tan", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Tan::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("tan(1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.5574077246549023);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Round, "MathVMBuiltinFunctions.Round", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Round::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("round(2.5)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 3.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Round2, "MathVMBuiltinFunctions.Round2", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Round2::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("round(2.4)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 2.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Mod, "MathVMBuiltinFunctions.Mod", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Mod::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("mod(1, 2)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Hue2B, "MathVMBuiltinFunctions.Hue2B", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Hue2B::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("hue2b(1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Hue2G, "MathVMBuiltinFunctions.Hue2G", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Hue2G::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("hue2g(1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Hue2R, "MathVMBuiltinFunctions.Hue2R", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Hue2R::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("hue2r(1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1);
+
+	return true;
+}
 #endif
