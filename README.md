@@ -110,6 +110,20 @@ Here the x increment (assuming x is a global variable) will be under lock.
 
 Note: the compiler will automatically detect deadlocks
 
+From C++ you can make use of the ParallelFor() function:
+
+```cpp
+ParallelFor(100, [&](const int32 ThreadId)
+{
+    TMap<FString, double> LocalVariables;
+    LocalVariables.Add("i", ThreadId);
+    MathVM->ExecuteStealth(LocalVariables);
+});
+```
+
+This will try to distribute 100 evalutations by setting the "i" local variable for each one.
+
+Generally every Execute() method is thread safe so you can use it safely in Async tasks.
 
 ## Resources
 
