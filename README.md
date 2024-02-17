@@ -121,6 +121,12 @@ To access those data from your expressions you can use the read() and write() fu
 
 ## Unit Tests
 
+The plugin has extensive code coverage available into ```Source/MathVM/Private/Tests```.
+
+You can run from the Automation tool in the Unreal Engine Editor, or via commandline:
+
+UnrealEditor-Cmd.exe 'path to the .uproject file' -NoSound -nullrhi -nosplash -log -Unattended -Nopause -TestExit="Automation Test Queue Empty" -ExecCmds="Automation RunTests MathVM"
+
 ## Builtin Functions in FMathVM
 
 ### abs(n)
