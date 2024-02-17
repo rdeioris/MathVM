@@ -274,7 +274,7 @@ FMathVM::FMathVM()
 	RegisterFunction("floor", MathVM::BuiltinFunctions::Floor, MathVM::BuiltinFunctions::FloorArgs);
 	RegisterFunction("fract", MathVM::BuiltinFunctions::Fract, MathVM::BuiltinFunctions::FractArgs);
 	RegisterFunction("gradient", MathVM::BuiltinFunctions::Gradient, MathVM::BuiltinFunctions::GradientArgs);
-	RegisterFunction("greater", MathVM::BuiltinFunctions::GreaterThan, MathVM::BuiltinFunctions::GreaterThanArgs);
+	RegisterFunction("greater", MathVM::BuiltinFunctions::Greater, MathVM::BuiltinFunctions::GreaterArgs);
 	RegisterFunction("greater_equal", MathVM::BuiltinFunctions::GreaterEqual, MathVM::BuiltinFunctions::GreaterEqualArgs);
 	RegisterFunction("hue2b", MathVM::BuiltinFunctions::Hue2B, MathVM::BuiltinFunctions::Hue2BArgs);
 	RegisterFunction("hue2g", MathVM::BuiltinFunctions::Hue2G, MathVM::BuiltinFunctions::Hue2GArgs);

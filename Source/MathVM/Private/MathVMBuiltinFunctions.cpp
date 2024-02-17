@@ -223,7 +223,7 @@ namespace MathVM
 			MATHVM_RETURN(FMath::Fractional(Args[0]));
 		}
 
-		bool GreaterThan(MATHVM_ARGS)
+		bool Greater(MATHVM_ARGS)
 		{
 			MATHVM_RETURN(Args[0] > Args[1] ? 1 : 0);
 		}

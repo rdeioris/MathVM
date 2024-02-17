@@ -26,7 +26,7 @@ namespace MathVM
 		MATHVM_API bool Floor(MATHVM_ARGS); constexpr int32 FloorArgs = 1;
 		MATHVM_API bool Fract(MATHVM_ARGS); constexpr int32 FractArgs = 1;
 		MATHVM_API bool Gradient(MATHVM_ARGS); constexpr int32 GradientArgs = -1;
-		MATHVM_API bool GreaterThan(MATHVM_ARGS); constexpr int32 GreaterThanArgs = 2;
+		MATHVM_API bool Greater(MATHVM_ARGS); constexpr int32 GreaterArgs = 2;
 		MATHVM_API bool GreaterEqual(MATHVM_ARGS); constexpr int32 GreaterEqualArgs = 2;
 		MATHVM_API bool Hue2B(MATHVM_ARGS); constexpr int32 Hue2BArgs = 1;
 		MATHVM_API bool Hue2G(MATHVM_ARGS); constexpr int32 Hue2GArgs = 1;

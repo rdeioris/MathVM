@@ -705,4 +705,76 @@ bool MathVMBuiltinFunctions_Exp2::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Greater, "MathVMBuiltinFunctions.Greater", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Greater::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("greater(5, 1)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_GreaterNot, "MathVMBuiltinFunctions.GreaterNot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_GreaterNot::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("greater(2, 5)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 0.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_GreaterEqual, "MathVMBuiltinFunctions.GreaterEqual", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_GreaterEqual::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("greater_equal(5, 5)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_GreaterEqualNot, "MathVMBuiltinFunctions.GreaterEqualNot", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_GreaterEqualNot::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("greater_equal(4, 5)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 0.0);
+
+	return true;
+}
 #endif
