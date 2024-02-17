@@ -399,4 +399,112 @@ bool MathVMBuiltinFunctions_Sin::RunTest(const FString& Parameters)
 
 	return true;
 }
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Not, "MathVMBuiltinFunctions.Not", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Not::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("not(3)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 0.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_NotZero, "MathVMBuiltinFunctions.NotZero", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_NotZero::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("not(0)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 1.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_NotNeg, "MathVMBuiltinFunctions.NotNeg", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_NotNeg::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("not(-10)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 0.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Length, "MathVMBuiltinFunctions.Length", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Length::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("length(1, 2, 3)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 3.7416573867739413);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Degrees, "MathVMBuiltinFunctions.Degrees", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Degrees::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("degrees(PI)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 180.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Lerp, "MathVMBuiltinFunctions.Lerp", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Lerp::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("lerp(0, 100, 0.5)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 50.0);
+
+	return true;
+}
 #endif

@@ -253,7 +253,7 @@ namespace MathVM
 			double TotalLength = 0;
 			for (const double Arg : Args)
 			{
-				TotalLength += Arg;
+				TotalLength += Arg * Arg;
 			}
 
 			MATHVM_RETURN(FMath::Sqrt(TotalLength));
@@ -370,11 +370,6 @@ namespace MathVM
 		bool Sqrt(MATHVM_ARGS)
 		{
 			MATHVM_RETURN(FMath::Sqrt(Args[0]));
-		}
-
-		bool Step(MATHVM_ARGS)
-		{
-			MATHVM_RETURN(Args[1] < Args[0] ? 0 : 1);
 		}
 
 		bool Tan(MATHVM_ARGS)

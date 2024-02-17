@@ -298,7 +298,6 @@ FMathVM::FMathVM()
 	RegisterFunction("sign", MathVM::BuiltinFunctions::Sign, MathVM::BuiltinFunctions::SignArgs);
 	RegisterFunction("sin", MathVM::BuiltinFunctions::Sin, MathVM::BuiltinFunctions::SinArgs);
 	RegisterFunction("sqrt", MathVM::BuiltinFunctions::Sqrt, MathVM::BuiltinFunctions::SqrtArgs);
-	RegisterFunction("step", MathVM::BuiltinFunctions::Step, MathVM::BuiltinFunctions::StepArgs);
 	RegisterFunction("tan", MathVM::BuiltinFunctions::Tan, MathVM::BuiltinFunctions::TanArgs);
 	RegisterFunction("trunc", MathVM::BuiltinFunctions::Trunc, MathVM::BuiltinFunctions::TruncArgs);
 

@@ -50,7 +50,6 @@ namespace MathVM
 		MATHVM_API bool Sign(MATHVM_ARGS); constexpr int32 SignArgs = 1;
 		MATHVM_API bool Sin(MATHVM_ARGS); constexpr int32 SinArgs = 1;
 		MATHVM_API bool Sqrt(MATHVM_ARGS); constexpr int32 SqrtArgs = 1;
-		MATHVM_API bool Step(MATHVM_ARGS); constexpr int32 StepArgs = 2;
 		MATHVM_API bool Tan(MATHVM_ARGS); constexpr int32 TanArgs = 1;
 		MATHVM_API bool Trunc(MATHVM_ARGS); constexpr int32 TruncArgs = 1;
 
