@@ -26,7 +26,7 @@ thread works on a different copy of them), global variables are shared between p
 
 The native data type is double and multiple statements can be specified by using the ```;``` separator:
 
-```
+```sh
 y = tan(x * 2); y = y + (3 * sin(z)); final = y + x;
 ```
 
