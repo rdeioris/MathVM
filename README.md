@@ -150,6 +150,25 @@ The ```FMathVMFunction``` represents the signature of the function:
 TFunction<bool(FMathVMCallContext& CallContext, const TArray<double>& Args)>
 ```
 
+A bunch of macros are available for quick function definitions.
+
+You can define a new function using a lambda:
+
+```cpp
+MathVM.RegisterFunction("sin2", MATHVM_LAMBDA
+{
+    MATHVM_RETURN(FMath::Sin(Args[0]));
+}, 1);
+```
+
+This corresponds to:
+
+```cpp
+MathVM.RegisterFunction("sin2", [](FMathVMCallContext& CallContext, const TArray<double>& Args) -> bool
+{
+    return CallContext.PushResult(FMath::Sin(Args[0])));
+}, 1);
+```
 
 ## Unit Tests
 
