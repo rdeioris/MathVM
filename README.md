@@ -66,6 +66,13 @@ This is the simplest node with support for local variables, resources (see below
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/8523d66f-12af-4fa5-bb6c-00025ed431e1)
 
+```cpp
+static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads = 1, const FString& ThreadIdLocalVariable = "i");
+```
+This is the full-featured function supporting parallel execution (by specifying the number of threads). The ThreadIdLocalVariable specify the name of the local variable that will get the current ThreadId (so you can recognize each thread by that value)
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/efd6d300-863e-4f71-bad8-3570b98cbfe8)
+
 
 ## The C++ API
 
@@ -73,7 +80,6 @@ The ```FMathVM``` class implements a full-featured VM for executing basic math a
 
 ```cpp
 #include "MathVM.h" // Remember to add MathVM module in your Build.cs file!
-
 ...
 
 FMathVM MathVM;
