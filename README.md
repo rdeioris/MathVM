@@ -73,8 +73,24 @@ You can then tokenize and compile the code:
 const bool bSuccess = MathVM.TokenizeAndCompile("y = sin(x)");
 if (!bSuccess)
 {
-    // you can access the error FString with MathVM.GetError()
+    // you can access the tokenization and compilation error FString with MathVM.GetError()
 }
+```
+
+Running is accomplished with the ```Execute``` family of methods:
+
+```cpp
+// execute the compiled code passing the specified local variables and popping the specified number of results. In case of error, the method will return false and will put the message in the Error reference
+bool Execute(TMap<FString, double>& LocalVariables, const int32 PopResults, TArray<double>& Results, FString& Error, void* LocalContext = nullptr);
+
+// like Execute(), but discards the return values
+bool ExecuteAndDiscard(TMap<FString, double>& LocalVariables, FString& Error, void* LocalContext = nullptr);
+
+// like Execute() but pops a single return value
+bool ExecuteOne(TMap<FString, double>& LocalVariables, double& Result, FString& Error, void* LocalContext = nullptr);
+
+// like Execute() but ignores return values and Error message. (Useful for testing)
+bool ExecuteStealth(TMap<FString, double>& LocalVariables, void* LocalContext = nullptr);
 ```
 
 ## Parrallel evaluation (A.K.A. critical sections)
@@ -100,6 +116,10 @@ To access those data from your expressions you can use the read() and write() fu
 ```
 
 ## Plotting
+
+## Adding functions to the VM
+
+## Unit Tests
 
 ## Builtin Functions in FMathVM
 
