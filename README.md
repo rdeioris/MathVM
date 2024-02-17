@@ -51,6 +51,10 @@ or in-line
 y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz = 100;
 ```
 
+## The Blueprint API
+
+## The C++ API
+
 ## Parrallel evaluation (A.K.A. critical sections)
 
 If there are parts of your expressions that works over global variables, and you want to avoid race conditions you can "surround" critical sections with curly brackets (braces):
