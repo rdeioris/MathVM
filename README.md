@@ -138,7 +138,9 @@ To access those data from your expressions you can use the read() and write() fu
 
 ## Adding functions to the VM
 
-You can extend an FMathVM instance using the method ```cpp
+You can extend an FMathVM instance using the method 
+
+```cpp
 bool RegisterFunction(const FString& Name, FMathVMFunction Callable, const int32 NumArgs)
 ```
 
