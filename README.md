@@ -34,6 +34,12 @@ y = tan(x * 2); y = y + (3 * sin(z)); final = y + x;
 
 If there are parts of your expressions that works over global variables, and you want to avoid race conditions you can "surround" critical sections with curly brackets (braces):
 
+```
+y = sin(z); {x = x + 1;}
+```
+
+Here the x increment (assuming x is a global variable) will be under lock.
+
 Note: the compiler will automatically detect deadlocks
 
 
