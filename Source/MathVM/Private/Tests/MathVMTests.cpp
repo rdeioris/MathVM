@@ -112,9 +112,9 @@ bool FMathVMTest_VarWithNum::RunTest(const FString& Parameters)
 	return true;
 }
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_VarArgs, "MathVM.VarArgs", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_HeavyChain, "MathVM.HeavyChain", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
-bool FMathVMTest_VarArgs::RunTest(const FString& Parameters)
+bool FMathVMTest_HeavyChain::RunTest(const FString& Parameters)
 {
 	FMathVM MathVM;
 	MathVM.TokenizeAndCompile("pow(0, 2);sin(cos(sin(cos(cos(5)))))");
@@ -122,9 +122,43 @@ bool FMathVMTest_VarArgs::RunTest(const FString& Parameters)
 	TMap<FString, double> LocalVariables;
 	FString Error;
 
-	MathVM.ExecuteAndDiscard(LocalVariables, Error);
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteAndDiscard(LocalVariables, Error));
 
-	//TestEqual(TEXT("x"), LocalVariables["x17"], 1000.123);
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_Comment, "MathVM.Comment", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_Comment::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("# hello # 17");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 17.0);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FMathVMTest_CommentNewLine, "MathVM.CommentNewLine", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool FMathVMTest_CommentNewLine::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("# hello \n# test# 22");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 22.0);
 
 	return true;
 }

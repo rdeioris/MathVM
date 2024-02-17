@@ -131,13 +131,13 @@ struct FMathVMEvaluationResult
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MathVM")
 	bool bSuccess;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MathVM")
 	FString Error;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MathVM")
 	TMap<FString, double> GlobalVariables;
 
 	FMathVMEvaluationResult()

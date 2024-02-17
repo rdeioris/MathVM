@@ -112,12 +112,7 @@ public:
 
 	bool ExecuteStealth(TMap<FString, double>& LocalVariables, void* LocalContext = nullptr);
 
-	void Reset();
-
-	const FString& GetError() const
-	{
-		return LastError;
-	}
+	const FString& GetError() const;
 
 	bool RegisterFunction(const FString& Name, FMathVMFunction Callable, const int32 NumArgs);
 
@@ -165,9 +160,8 @@ protected:
 	TArray<FMathVMToken> Tokens;
 	FString LastError;
 
-	uint32 CurrentLine;
-	uint32 CurrentColumn;
-	uint32 CurrentOffset;
+	int32 CurrentLine;
+	int32 CurrentOffset;
 
 	FString Accumulator;
 

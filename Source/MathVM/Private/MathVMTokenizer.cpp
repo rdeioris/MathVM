@@ -9,14 +9,22 @@ bool FMathVMBase::Tokenize(const FString& Code)
 	double NumberMultiplier = 1;
 	bool bIsInComment = false;
 
-	int32 CharIndex = 0;
-	while (CharIndex < CodeLen)
+	CurrentLine = 1;
+	CurrentOffset = 0;
+	Tokens.Empty();
+
+	while (CurrentOffset < CodeLen)
 	{
-		TCHAR Char = Code[CharIndex++];
+		TCHAR Char = Code[CurrentOffset++];
+
+		if (Char == '\n')
+		{
+			CurrentLine++;
+		}
 
 		if (bIsInComment)
 		{
-			if (Char == '\n' || Char == '\r' || Char == '#')
+			if (Char == '\n' || Char == '#')
 			{
 				bIsInComment = false;
 			}
@@ -42,9 +50,9 @@ bool FMathVMBase::Tokenize(const FString& Code)
 			FString NumberAccumulator = "";
 			NumberAccumulator += Char;
 
-			while (CharIndex < CodeLen)
+			while (CurrentOffset < CodeLen)
 			{
-				Char = Code[CharIndex];
+				Char = Code[CurrentOffset];
 				if (Char >= '0' && Char <= '9')
 				{
 					NumberAccumulator += Char;
@@ -54,16 +62,16 @@ bool FMathVMBase::Tokenize(const FString& Code)
 					break;
 				}
 
-				CharIndex++;
+				CurrentOffset++;
 			}
 
 			if (Char == '.' && !bStartsWithPoint)
 			{
 				NumberAccumulator += Char;
-				CharIndex++;
-				while (CharIndex < CodeLen)
+				CurrentOffset++;
+				while (CurrentOffset < CodeLen)
 				{
-					Char = Code[CharIndex];
+					Char = Code[CurrentOffset];
 					if (Char >= '0' && Char <= '9')
 					{
 						NumberAccumulator += Char;
@@ -73,23 +81,23 @@ bool FMathVMBase::Tokenize(const FString& Code)
 						break;
 					}
 
-					CharIndex++;
+					CurrentOffset++;
 				}
 			}
 
 			if (Char == 'e' || Char == 'E')
 			{
 				NumberAccumulator += Char;
-				CharIndex++;
-				Char = Code[CharIndex];
+				CurrentOffset++;
+				Char = Code[CurrentOffset];
 
 				if (Char == '+' || Char == '-')
 				{
 					NumberAccumulator += Char;
-					CharIndex++;
-					while (CharIndex < CodeLen)
+					CurrentOffset++;
+					while (CurrentOffset < CodeLen)
 					{
-						Char = Code[CharIndex];
+						Char = Code[CurrentOffset];
 						if (Char >= '0' && Char <= '9')
 						{
 							NumberAccumulator += Char;
@@ -99,7 +107,7 @@ bool FMathVMBase::Tokenize(const FString& Code)
 							break;
 						}
 
-						CharIndex++;
+						CurrentOffset++;
 					}
 				}
 			}
@@ -212,7 +220,7 @@ bool FMathVMBase::Tokenize(const FString& Code)
 				return false;
 			}
 			NumberMultiplier = 1;
-			}
+		}
 		else if (Char == ',')
 		{
 			if (!CheckAndResetAccumulator() || !AddToken(FMathVMToken(EMathVMTokenType::Comma)))

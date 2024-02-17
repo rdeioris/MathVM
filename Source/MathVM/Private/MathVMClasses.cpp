@@ -114,16 +114,11 @@ FMathVMBase::FMathVMBase()
 
 			return true;
 		};
-
-	Reset();
 }
 
-void FMathVMBase::Reset()
+const FString& FMathVMBase::GetError() const
 {
-	CurrentLine = 0;
-	CurrentColumn = 0;
-	CurrentOffset = 0;
-	Tokens.Empty();
+	return LastError;
 }
 
 bool FMathVMBase::SetError(const FString& InError)
