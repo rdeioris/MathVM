@@ -13,7 +13,7 @@ Unreal Engine plugin for (parallel) Math Expressions evaluation and plotting
 ## What is it?
 This plugins exposes a simple framework (both C++ and Blueprint) for running user-defined math expressions:
 
-```sh
+```
 y = sin(x) * 2
 ```
 
@@ -26,7 +26,7 @@ thread works on a different copy of them), global variables are shared between p
 
 The native data type is double and multiple statements can be specified by using the ```;``` separator:
 
-```sh
+```
 y = tan(x * 2); y = y + (3 * sin(z)); final = y + x;
 ```
 
@@ -38,7 +38,7 @@ You can add comments in your expressions using the # symbol.
 
 Comments can be per-line:
 
-```sh
+```
 y = sin(x);
 # this is a comment
 z = cos(w);
@@ -47,13 +47,35 @@ z = cos(w);
 
 or in-line
 
-```sh
+```
 y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz = 100;
 ```
 
 ## The Blueprint API
 
 ## The C++ API
+
+The ```FMathVM``` class implements a full-featured VM for executing basic math and trigonometry operations. Once you have an instance you can assign Globals, Consts or Resources (see below):
+
+```cpp
+#include "MathVM.h" // Remember to add MathVM module in your Build.cs file!
+
+...
+
+FMathVM MathVM;
+MathVM.RegisterGlobalVariable("hello", 100);
+MathVM.RegisterConst("XYZ", 200);
+```
+
+You can then tokenize and compile the code:
+
+```cpp
+const bool bSuccess = MathVM.TokenizeAndCompile("y = sin(x)");
+if (!bSuccess)
+{
+    // you can access the error FString with MathVM.GetError()
+}
+```
 
 ## Parrallel evaluation (A.K.A. critical sections)
 
