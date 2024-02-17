@@ -70,6 +70,13 @@ Note: the compiler will automatically detect deadlocks
 
 ## Resources
 
+Resources are blocks of data that can be read and written by a MathVM instance. Currently Textures, Curves and Array of doubles are supported, but you can implement your own in C++ by implementing the ```IMathVMResource``` interface.
+
+To access those data from your expressions you can use the read() and write() functions:
+
+```
+```
+
 ## Plotting
 
 ## Builtin Functions
