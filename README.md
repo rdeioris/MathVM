@@ -13,7 +13,7 @@ Unreal Engine plugin for (parallel) Math Expressions evaluation and plotting
 ## What is it?
 This plugins exposes a simple framework (both C++ and Blueprint) for running user-defined math expressions:
 
-```
+```sh
 y = sin(x) * 2
 ```
 
@@ -38,7 +38,7 @@ You can add comments in your expressions using the # symbol.
 
 Comments can be per-line:
 
-```
+```sh
 y = sin(x);
 # this is a comment
 z = cos(w);
