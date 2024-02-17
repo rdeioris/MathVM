@@ -69,7 +69,7 @@ This is the simplest node with support for local variables, resources (see below
 ```cpp
 static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads = 1, const FString& ThreadIdLocalVariable = "i");
 ```
-This is the full-featured function supporting parallel execution (by specifying the number of threads). The ThreadIdLocalVariable specify the name of the local variable that will get the current ThreadId (so you can recognize each thread by that value)
+This is the full-featured function supporting parallel execution (by specifying the number of threads). The ThreadIdLocalVariable specifies the name of the local variable that will get the current ThreadId (so you can recognize each thread by that value)
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/efd6d300-863e-4f71-bad8-3570b98cbfe8)
 
