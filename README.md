@@ -58,13 +58,30 @@ y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz
 
 ## The Blueprint API
 
+```cpp
+static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
+```
+
+This is the simplest node with support for local variables, resources (see below) and a single return value
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/8523d66f-12af-4fa5-bb6c-00025ed431e1)
+
+```cpp
+static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads = 1, const FString& ThreadIdLocalVariable = "i");
+```
+This is the full-featured function supporting parallel execution (by specifying the number of threads). The ThreadIdLocalVariable specifies the name of the local variable that will get the current ThreadId (so you can recognize each thread by that value)
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/efd6d300-863e-4f71-bad8-3570b98cbfe8)
+
+The braces in the code are used for locking (see the parallel execution section below)
+
+
 ## The C++ API
 
 The ```FMathVM``` class implements a full-featured VM for executing basic math and trigonometry operations. Once you have an instance you can assign Globals, Consts or Resources (see below):
 
 ```cpp
 #include "MathVM.h" // Remember to add MathVM module in your Build.cs file!
-
 ...
 
 FMathVM MathVM;
@@ -191,3 +208,90 @@ returns the arccosine (inverse cosine) of n (in radians).
 ### all(...)
 
 returns 1 if all of the arguments are non 0. Otherwise returns 0.
+
+### any(...)
+
+### asin(n)
+
+### atan(n)
+
+### ceil(n)
+
+### clamp(n, x, y)
+
+### cos(n)
+
+### degrees(n)
+
+### distance(...)
+
+### dot(...)
+
+### equal(...)
+
+### exp(n)
+
+### exp2(n)
+
+### floor(n)
+
+### fract(n)
+
+### gradient(...)
+
+### greater(n, m)
+
+### greater_equal(n, m)
+
+### hue2b(n)
+
+### hue2g(n)
+
+### hue2r(n)
+
+### length(...)
+
+### lerp(x, y, n)
+
+### less(n, m)
+
+### less_equal(n, m)
+
+### log(n)
+
+### log2(n)
+
+### map(n, x0, x1, y0, y1)
+
+### max(...)
+
+### min(...)
+
+### mod(n, m)
+
+### not(n)
+
+### pow(n, m)
+
+### radians(n)
+
+### rand(n, m)
+
+### round(n)
+
+### round_even(n)
+
+### sign(n)
+
+### sin(n)
+
+### sqrt(n)
+
+### tan(n)
+
+### trunc(n)
+
+### read(id, ...)
+
+### write(id, ...)
+
