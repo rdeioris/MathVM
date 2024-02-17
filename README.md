@@ -9,6 +9,11 @@ Unreal Engine plugin for (parallel) Math Expressions evaluation and plotting
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/c91bdfa0-76fc-4cef-8029-afafee432bf0)
 
+Join the Discord Server: https://discord.gg/WJkRY2UVhn
+
+Support the project with Patreon: https://www.patreon.com/rdeioris
+
+Commercial support is provided by Blitter S.r.l. (Italy) [contact the Discord Server Admin for infos]
 
 ## What is it?
 This plugins exposes a simple framework (both C++ and Blueprint) for running user-defined math expressions:
@@ -125,7 +130,7 @@ The plugin has extensive code coverage available into ```Source/MathVM/Private/T
 
 You can run from the Automation tool in the Unreal Engine Editor, or via commandline:
 
-UnrealEditor-Cmd.exe 'path to the .uproject file' -NoSound -nullrhi -nosplash -log -Unattended -Nopause -TestExit="Automation Test Queue Empty" -ExecCmds="Automation RunTests MathVM"
+```UnrealEditor-Cmd.exe 'path to the .uproject file' -NoSound -nullrhi -nosplash -log -Unattended -Nopause -TestExit="Automation Test Queue Empty" -ExecCmds="Automation RunTests MathVM"```
 
 ## Builtin Functions in FMathVM
 
