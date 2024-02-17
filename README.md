@@ -67,6 +67,15 @@ This is the simplest node with support for local variables, resources (see below
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/8523d66f-12af-4fa5-bb6c-00025ed431e1)
 
 ```cpp
+bool MathVMRunSimpleMulti(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, const int32 PopResults, TArray<double>& Results, FString& Error)
+````
+
+This is a variant of the simple node supporting multiple return values (by specifying the amoutn of results to pop)
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/892ea32a-d131-402f-ae7b-167f910a061a)
+
+
+```cpp
 static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads = 1, const FString& ThreadIdLocalVariable = "i");
 ```
 This is the full-featured function supporting parallel execution (by specifying the number of threads). The ThreadIdLocalVariable specifies the name of the local variable that will get the current ThreadId (so you can recognize each thread by that value)
