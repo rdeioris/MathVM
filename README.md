@@ -1,7 +1,7 @@
 # MathVM
 ![MathVM](https://github.com/rdeioris/MathVM/assets/2234592/0be2bda5-6b79-4979-9e87-3c848d5a4811)
 
-Unreal Engine plugin for Math Expressions evaluation
+Unreal Engine plugin for (parallel) Math Expressions evaluation and plotting
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/929f682e-7ec7-4caa-b70f-781d0fb16f01)
 
