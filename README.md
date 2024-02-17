@@ -73,6 +73,8 @@ This is the full-featured function supporting parallel execution (by specifying 
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/efd6d300-863e-4f71-bad8-3570b98cbfe8)
 
+The braces in the code are used for locking (see the parallel execution section below)
+
 
 ## The C++ API
 
