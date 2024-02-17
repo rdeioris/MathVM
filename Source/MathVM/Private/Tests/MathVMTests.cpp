@@ -178,9 +178,9 @@ bool FMathVMTest_Multi::RunTest(const FString& Parameters)
 
 	TestEqual(TEXT("Results"), Results.Num(), 3);
 
-	TestEqual(TEXT("Result[0]"), Results[0], 3.0);
-	TestEqual(TEXT("Result[1]"), Results[1], 2.0);
-	TestEqual(TEXT("Result[2]"), Results[2], 1.0);
+	TestEqual(TEXT("Results[0]"), Results[0], 3.0);
+	TestEqual(TEXT("Results[1]"), Results[1], 2.0);
+	TestEqual(TEXT("Results[2]"), Results[2], 1.0);
 
 	return true;
 }
