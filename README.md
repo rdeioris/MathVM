@@ -30,6 +30,27 @@ The native data type is double and multiple statements can be specified by using
 y = tan(x * 2); y = y + (3 * sin(z)); final = y + x;
 ```
 
+The language has no support for loops or conditionals, this increases safety for external provided code and keeps the VM very simple and efficient (technically it is an extended Shunting Yard https://en.wikipedia.org/wiki/Shunting_yard_algorithm).
+
+## Comments
+
+You can add comments in your expressions using the # symbol. 
+
+Comments can be per-line:
+
+```
+y = sin(x);
+# this is a comment
+z = cos(w);
+# this is another comment
+```
+
+or in-line
+
+```
+y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz = 100;
+```
+
 ## Parrallel evaluation (A.K.A. critical sections)
 
 If there are parts of your expressions that works over global variables, and you want to avoid race conditions you can "surround" critical sections with curly brackets (braces):
