@@ -99,6 +99,30 @@ bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, UPARA
 	return MathVM.ExecuteOne(LocalVariables, Result, Error);
 }
 
+bool UMathVMBlueprintFunctionLibrary::MathVMRunSimpleMulti(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, const int32 PopResults, TArray<double>& Results, FString& Error)
+{
+	if (Code.IsEmpty())
+	{
+		Error = "Empty Code";
+		return false;
+	}
+
+	FMathVM MathVM;
+
+	if (!MathVM::BlueprintUtility::RegisterResources(MathVM, Resources, Error))
+	{
+		return false;
+	}
+
+	if (!MathVM.TokenizeAndCompile(Code))
+	{
+		Error = MathVM.GetError();
+		return false;
+	}
+
+	return MathVM.Execute(LocalVariables, PopResults, Results, Error);
+}
+
 void UMathVMBlueprintFunctionLibrary::MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumThreads, const FString& ThreadIdLocalVariable)
 {
 	if (Code.IsEmpty())
