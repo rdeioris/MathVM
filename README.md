@@ -101,7 +101,7 @@ To access those data from your expressions you can use the read() and write() fu
 
 ## Plotting
 
-## Builtin Functions
+## Builtin Functions in FMathVM
 
 ### abs(n)
 
