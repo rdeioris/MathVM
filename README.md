@@ -191,3 +191,90 @@ returns the arccosine (inverse cosine) of n (in radians).
 ### all(...)
 
 returns 1 if all of the arguments are non 0. Otherwise returns 0.
+
+### any(...)
+
+### asin(n)
+
+### atan(n)
+
+### ceil(n)
+
+### clamp(n, x, y)
+
+### cos(n)
+
+### degrees(n)
+
+### distance(...)
+
+### dot(...)
+
+### equal(...)
+
+### exp(n)
+
+### exp2(n)
+
+### floor(n)
+
+### fract(n)
+
+### gradient(...)
+
+### greater(n, m)
+
+### greater_equal(n, m)
+
+### hue2b(n)
+
+### hue2g(n)
+
+### hue2r(n)
+
+### length(...)
+
+### lerp(x, y, n)
+
+### less(n, m)
+
+### less_equal(n, m)
+
+### log(n)
+
+### log2(n)
+
+### map(n, x0, x1, y0, y1)
+
+### max(...)
+
+### min(...)
+
+### mod(n, m)
+
+### not(n)
+
+### pow(n, m)
+
+### radians(n)
+
+### rand(n, m)
+
+### round(n)
+
+### round_even(n)
+
+### sign(n)
+
+### sin(n)
+
+### sqrt(n)
+
+### tan(n)
+
+### trunc(n)
+
+### read(id, ...)
+
+### write(id, ...)
+
