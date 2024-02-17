@@ -47,7 +47,7 @@ z = cos(w);
 
 or in-line
 
-```
+```sh
 y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz = 100;
 ```
 
