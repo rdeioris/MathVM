@@ -33,7 +33,7 @@ namespace MathVM
 		MATHVM_API bool Hue2R(MATHVM_ARGS); constexpr int32 Hue2RArgs = 1;
 		MATHVM_API bool Length(MATHVM_ARGS); constexpr int32 LengthArgs = -1;
 		MATHVM_API bool Lerp(MATHVM_ARGS); constexpr int32 LerpArgs = 3;
-		MATHVM_API bool LessThan(MATHVM_ARGS); constexpr int32 LessArgs = 2;
+		MATHVM_API bool Less(MATHVM_ARGS); constexpr int32 LessArgs = 2;
 		MATHVM_API bool LessEqual(MATHVM_ARGS); constexpr int32 LessEqualArgs = 2;
 		MATHVM_API bool Log(MATHVM_ARGS); constexpr int32 LogArgs = 1;
 		MATHVM_API bool Log2(MATHVM_ARGS); constexpr int32 Log2Args = 1;

@@ -264,7 +264,7 @@ namespace MathVM
 			MATHVM_RETURN(FMath::Lerp(Args[0], Args[1], Args[2]));
 		}
 
-		bool LessThan(MATHVM_ARGS)
+		bool Less(MATHVM_ARGS)
 		{
 			MATHVM_RETURN(Args[0] < Args[1] ? 1 : 0);
 		}

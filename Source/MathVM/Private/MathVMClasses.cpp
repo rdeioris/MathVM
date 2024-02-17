@@ -281,7 +281,7 @@ FMathVM::FMathVM()
 	RegisterFunction("hue2r", MathVM::BuiltinFunctions::Hue2R, MathVM::BuiltinFunctions::Hue2RArgs);
 	RegisterFunction("length", MathVM::BuiltinFunctions::Length, MathVM::BuiltinFunctions::LengthArgs);
 	RegisterFunction("lerp", MathVM::BuiltinFunctions::Lerp, MathVM::BuiltinFunctions::LerpArgs);
-	RegisterFunction("less", MathVM::BuiltinFunctions::LessThan, MathVM::BuiltinFunctions::LessArgs);
+	RegisterFunction("less", MathVM::BuiltinFunctions::Less, MathVM::BuiltinFunctions::LessArgs);
 	RegisterFunction("less_equal", MathVM::BuiltinFunctions::LessEqual, MathVM::BuiltinFunctions::LessEqualArgs);
 	RegisterFunction("log", MathVM::BuiltinFunctions::Log, MathVM::BuiltinFunctions::LogArgs);
 	RegisterFunction("log2", MathVM::BuiltinFunctions::Log2, MathVM::BuiltinFunctions::Log2Args);
