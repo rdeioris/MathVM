@@ -58,6 +58,15 @@ y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz
 
 ## The Blueprint API
 
+```cpp
+static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
+```
+
+This is the simplest node with support for local variables, resources (see below) and a single return value
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/8523d66f-12af-4fa5-bb6c-00025ed431e1)
+
+
 ## The C++ API
 
 The ```FMathVM``` class implements a full-featured VM for executing basic math and trigonometry operations. Once you have an instance you can assign Globals, Consts or Resources (see below):
