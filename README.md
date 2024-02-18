@@ -58,6 +58,8 @@ y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz
 
 ## The Blueprint API
 
+### MathVMRunSimple()
+
 ```cpp
 static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
 ```
@@ -65,6 +67,8 @@ static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, doubl
 This is the simplest node with support for local variables, resources (see below) and a single return value
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/8523d66f-12af-4fa5-bb6c-00025ed431e1)
+
+### MathVMRunSimpleMulti()
 
 ```cpp
 bool MathVMRunSimpleMulti(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, const int32 PopResults, TArray<double>& Results, FString& Error)
@@ -74,6 +78,7 @@ This is a variant of the simple node supporting multiple return values (by speci
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/892ea32a-d131-402f-ae7b-167f910a061a)
 
+### MathVMRun()
 
 ```cpp
 static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumSamples = 1, const FString& SampleLocalVariable = "i");
@@ -86,6 +91,7 @@ will be distributed among various threads (generally based on the number of avai
 
 Note: The braces in the code are used for locking (see the parallel execution section below)
 
+### MathVMPlotter()
 
 ```cpp
 static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, const TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMPlotGenerated& OnPlotGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
