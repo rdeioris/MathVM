@@ -81,7 +81,8 @@ static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVa
 This is the full-featured function supporting parallel execution (by specifying the number of 'samples'). The 'SampleLocalVariable' specifies the name of the local variable that will get the current SampleId (so you can recognize each iteration by that value). Internally, ParallelFor is used, that means the tasks
 will be distributed among various threads (generally based on the number of available cpu cores)
 
-![image](https://github.com/rdeioris/MathVM/assets/2234592/efd6d300-863e-4f71-bad8-3570b98cbfe8)
+![image](https://github.com/rdeioris/MathVM/assets/2234592/f643dabc-c061-4c7d-877c-eac12ad95505)
+
 
 Note: The braces in the code are used for locking (see the parallel execution section below)
 
