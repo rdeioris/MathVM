@@ -118,6 +118,11 @@ x = 1 / (i + 1);
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/481e39e3-96a3-46e5-aebf-3a6a6ca86cd3)
 
+You can add text to the plot by adding items to the TextsToPlot array:
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/43ff359a-8226-4e4e-99ad-74cfd62c410d)
+
+You can put global variables in the text by surrounding them in braces. 
 
 ## The C++ API
 
