@@ -244,6 +244,8 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### cos(n)
 
+returns the cosine of n.
+
 ### degrees(n)
 
 ### distance(...)
@@ -264,7 +266,11 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### greater(n, m)
 
+returns 1 if n is greater than m. Otherwise 0.
+
 ### greater_equal(n, m)
+
+returns 1 if n is greater or equal than m. Otherwise 0.
 
 ### hue2b(n)
 
@@ -276,9 +282,15 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### lerp(x, y, n)
 
+returns linear interpolation of x to y with gradient n.
+
 ### less(n, m)
 
+returns 1 if n is less than m. Otherwise 0.
+
 ### less_equal(n, m)
+
+returns 1 if n is less or equal than m. Otherwise 0.
 
 ### log(n)
 
@@ -298,7 +310,11 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### radians(n)
 
+returns n degrees in radians.
+
 ### rand(n, m)
+
+returns a random value between n and m (inclusive).
 
 ### round(n)
 
