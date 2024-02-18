@@ -99,6 +99,16 @@ static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, cons
 
 This follows the same logic of MathVMRun() but plots lines and points in a texture, based on the expressions results. 
 
+![image](https://github.com/rdeioris/MathVM/assets/2234592/dbc23085-6d1b-4735-b997-f18f7e45ea89)
+
+The VariablesToPlot map allows you to define how to draw each sampled value (currently you can draw lines, points and a combination of two with custom thickness).
+
+By default a 1024x1024 texture (a RenderTarget) will be returned, but you can pass an already existent render target using the PlotterConfig structure:
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/fb8feceb-f022-4f23-842a-f73a3da7ef6b)
+
+The structure allows to define background, borders and grid properties of the plot too.
+
 ## The C++ API
 
 The ```FMathVM``` class implements a full-featured VM for executing basic math and trigonometry operations. Once you have an instance you can assign Globals, Consts or Resources (see below):
@@ -236,6 +246,8 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### asin(n)
 
+returns the arcsine of n.
+
 ### atan(n)
 
 ### ceil(n)
@@ -326,7 +338,11 @@ returns a random value between n and m (inclusive).
 
 ### sqrt(n)
 
+returns the square root of n.
+
 ### tan(n)
+
+returns the tangent of n.
 
 ### trunc(n)
 
