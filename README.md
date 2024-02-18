@@ -109,6 +109,16 @@ By default a 1024x1024 texture (a RenderTarget) will be returned, but you can pa
 
 The structure allows to define background, borders and grid properties of the plot too.
 
+This is an example result for 8 samples, two variables (x and y) and a red grid:
+
+```
+y = 0;
+x = 1 / (i + 1);
+```
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/481e39e3-96a3-46e5-aebf-3a6a6ca86cd3)
+
+
 ## The C++ API
 
 The ```FMathVM``` class implements a full-featured VM for executing basic math and trigonometry operations. Once you have an instance you can assign Globals, Consts or Resources (see below):
