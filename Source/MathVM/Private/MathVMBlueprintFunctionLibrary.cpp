@@ -75,6 +75,20 @@ UMathVMResourceObject* UMathVMBlueprintFunctionLibrary::MathVMResourceObjectAsDo
 	return NewResourceObject;
 }
 
+UMathVMResourceObject* UMathVMBlueprintFunctionLibrary::MathVMResourceObjectFromDataTable(UDataTable* DataTable, const TArray<FString>& FieldNames)
+{
+	if (!DataTable || FieldNames.IsEmpty())
+	{
+		return nullptr;
+	}
+
+	UMathVMResourceObject* NewResourceObject = NewObject<UMathVMResourceObject>();
+
+	NewResourceObject->SetMathVMResource(MakeShared<FMathVMDataTableResource>(DataTable, FieldNames));
+
+	return NewResourceObject;
+}
+
 bool UMathVMBlueprintFunctionLibrary::MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error)
 {
 	if (Code.IsEmpty())

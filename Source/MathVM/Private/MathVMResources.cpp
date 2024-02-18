@@ -154,3 +154,74 @@ void FMathVMDoubleArrayResource::Write(const TArray<double>& Args)
 		Data[Args[0]] = Args[1];
 	}
 }
+
+FMathVMDataTableResource::FMathVMDataTableResource(UDataTable* DataTable, const TArray<FString>& FieldNames)
+{
+	bool bFailed = false;
+	for (auto RowIt = DataTable->GetRowMap().CreateConstIterator(); RowIt; ++RowIt)
+	{
+		if (bFailed)
+		{
+			return;
+		}
+
+		TArray<double> Fields;
+		Fields.AddZeroed(FieldNames.Num());
+
+		for (int32 FieldIndex = 0; FieldIndex < FieldNames.Num(); FieldIndex++)
+		{
+			const FString& FieldName = FieldNames[FieldIndex];
+
+			FProperty* Property = DataTable->FindTableProperty(*FieldName);
+			if (!Property)
+			{
+				bFailed = true;
+				break;
+			}
+
+			FNumericProperty* NumericProperty = CastField<FNumericProperty>(Property);
+			if (!NumericProperty)
+			{
+				bFailed = true;
+				break;
+			}
+
+			uint8* RowData = NumericProperty->ContainerPtrToValuePtr<uint8>(RowIt.Value());
+
+			if (NumericProperty->IsFloatingPoint())
+			{
+				Fields[FieldIndex] = NumericProperty->GetFloatingPointPropertyValue(RowData);
+			}
+			else if (NumericProperty->IsInteger())
+			{
+				Fields[FieldIndex] = static_cast<double>(NumericProperty->GetSignedIntPropertyValue(RowData));
+			}
+		}
+
+		if (bFailed)
+		{
+			return;
+		}
+
+		Data.Add(MoveTemp(Fields));
+	}
+}
+
+double FMathVMDataTableResource::Read(const TArray<double>& Args) const
+{
+	if (Args.Num() < 2)
+	{
+		return 0;
+	}
+
+	if (Data.IsValidIndex(Args[0]) && Data[Args[0]].IsValidIndex(Args[1]))
+	{
+		return Data[Args[0]][Args[1]];
+	}
+
+	return 0;
+}
+
+void FMathVMDataTableResource::Write(const TArray<double>& Args)
+{
+}

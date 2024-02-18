@@ -185,6 +185,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "MathVM")
 	static UMathVMResourceObject* MathVMResourceObjectAsDoubleArray(const int32 ArraySize);
 
+	UFUNCTION(BlueprintCallable, Category = "MathVM")
+	static UMathVMResourceObject* MathVMResourceObjectFromDataTable(UDataTable* DataTable, const TArray<FString>& FieldNames);
+
 	UFUNCTION(BlueprintCallable, meta = (AutoCreateRefTerm = "LocalVariables,Resources"), Category = "MathVM")
 	static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
 

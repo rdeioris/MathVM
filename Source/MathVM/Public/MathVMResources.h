@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Curves/CurveBase.h"
+#include "Engine/DataTable.h"
 #include "Engine/Texture2D.h"
 #include "MathVM.h"
 
@@ -41,4 +42,15 @@ public:
 
 protected:
 	TArray<double> Data;
+};
+
+class MATHVM_API FMathVMDataTableResource : public IMathVMResource
+{
+public:
+	FMathVMDataTableResource(UDataTable* DataTable, const TArray<FString>& FieldNames);
+	virtual double Read(const TArray<double>& Args) const override;
+	virtual void Write(const TArray<double>& Args) override;
+
+protected:
+	TArray<TArray<double>> Data;
 };
