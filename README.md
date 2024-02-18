@@ -109,7 +109,7 @@ By default a 1024x1024 texture (a RenderTarget) will be returned, but you can pa
 
 The structure allows to define background, borders and grid properties of the plot too.
 
-This is an example result for 8 samples, two variables (x and y) and a red grid:
+This is an example result for 8 samples, two variables (x and y), domain (-1, 1) and a red grid:
 
 ```
 y = 0;
