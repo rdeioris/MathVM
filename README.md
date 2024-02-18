@@ -87,6 +87,12 @@ will be distributed among various threads (generally based on the number of avai
 Note: The braces in the code are used for locking (see the parallel execution section below)
 
 
+```cpp
+static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, const TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMPlotGenerated& OnPlotGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
+```
+
+This follows the same logic of MathVMRun() but plots lines and points in a texture, based on the expressions results. 
+
 ## The C++ API
 
 The ```FMathVM``` class implements a full-featured VM for executing basic math and trigonometry operations. Once you have an instance you can assign Globals, Consts or Resources (see below):
