@@ -201,6 +201,10 @@ To access those data from your expressions you can use the read() and write() fu
 
 ## Plotting
 
+Plotting is currently sopported only via the blueprint function ```MathVMPlotter()```. While you can obviously use it from C++, a more advanced api (with SVG support) is in development.
+
+Points, lines and texts are the only plottable objects. More shapes and graph types (like bars and pies) are in development.
+
 ## Adding functions to the VM
 
 You can extend an FMathVM instance using the method 
@@ -235,6 +239,48 @@ MathVM.RegisterFunction("sin2", [](FMathVMCallContext& CallContext, const TArray
 }, 1);
 ```
 
+The FMathVMCallContext object contains the Stack of the current execution as well as local variables and a LocalContext (it is a void pointer that can be passed by the various Execute() functions).
+
+By passing -1 to the NumberOfArgs argument in RegisterFunction(), you can support variable number of arguments.
+
+This is the implementation of the `all(...)` function:
+
+```cpp
+bool All(MATHVM_ARGS)
+{
+	for (const double Value : Args)
+	{
+		if (Value == 0.0)
+		{
+			MATHVM_RETURN(0);
+		}
+	}
+	MATHVM_RETURN(1);
+}
+```
+
+While this one (with error check and reporting) is for `equal(...)`:
+
+```cpp
+bool Equal(MATHVM_ARGS)
+{
+	if (Args.Num() < 2)
+	{
+		MATHVM_ERROR("equal expects at least 2 arguments");
+	}
+
+	for (int32 ArgIndex = 1; ArgIndex < Args.Num(); ArgIndex++)
+	{
+		if (Args[ArgIndex] != Args[0])
+		{
+			MATHVM_RETURN(0);
+		}
+	}
+
+	MATHVM_RETURN(1);
+}
+```
+
 ## Unit Tests
 
 The plugin has extensive code coverage available into ```Source/MathVM/Private/Tests```.
@@ -242,6 +288,14 @@ The plugin has extensive code coverage available into ```Source/MathVM/Private/T
 You can run from the Automation tool in the Unreal Engine Editor, or via commandline:
 
 ```UnrealEditor-Cmd.exe 'path to the .uproject file' -NoSound -nullrhi -nosplash -log -Unattended -Nopause -TestExit="Automation Test Queue Empty" -ExecCmds="Automation RunTests MathVM"```
+
+## TODO
+
+ * Investigate Templated version of FMathVM for supporting other types in addition to doubles (like a float one, an integer one or a vector based one)
+ * Improve the Texture2D Resource
+ * Investigate an error api for Resources
+ * MetaSounds support (generate sounds from expressions)
+ * Integration with Compushady (https://github.com/rdeioris/CompushadyUnreal) for GPU execution
 
 ## Builtin Functions in FMathVM
 
