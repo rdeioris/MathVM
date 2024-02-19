@@ -74,14 +74,14 @@ bool FMathVMBase::Execute(TMap<FString, double>& LocalVariables, const int32 Pop
 	FMathVMCallContext CallContext(*this, LocalVariables, LocalContext);
 
 	int32 TempTokensToReserve = 0;
-	for (const TArray<const FMathVMToken*> Statement : Statements)
+	for (const TArray<const FMathVMToken*>& Statement : Statements)
 	{
 		TempTokensToReserve += Statement.Num();
 	}
 	// this ensures no dangling pointers (no reallocation)
 	CallContext.TempTokens.Reserve(TempTokensToReserve);
 
-	for (const TArray<const FMathVMToken*> Statement : Statements)
+	for (const TArray<const FMathVMToken*>& Statement : Statements)
 	{
 		if (!ExecuteStatement(CallContext, Statement, Error))
 		{

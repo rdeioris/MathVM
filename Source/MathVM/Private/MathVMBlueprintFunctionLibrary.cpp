@@ -2,7 +2,9 @@
 
 
 #include "MathVMBlueprintFunctionLibrary.h"
+#include "Async/Async.h"
 #include "Async/ParallelFor.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
 #include "Engine/Canvas.h"
 
 

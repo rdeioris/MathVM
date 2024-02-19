@@ -1,6 +1,7 @@
 // Copyright 2024, Roberto De Ioris.
 
 #include "MathVMResources.h"
+#include "TextureResource.h"
 
 FMathVMTexture2DResource::FMathVMTexture2DResource(UTexture2D* Texture)
 {

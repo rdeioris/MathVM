@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/Font.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Kismet/KismetRenderingLibrary.h"
+#include "Layout/Margin.h"
 #include "MathVMResourceObject.h"
 #include "MathVMBlueprintFunctionLibrary.generated.h"
 
