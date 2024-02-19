@@ -58,6 +58,8 @@ y = sin(x); # compute the sin of x # z = cos(w); # this is another comment # xyz
 
 ## The Blueprint API
 
+### MathVMRunSimple()
+
 ```cpp
 static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, double& Result, FString& Error);
 ```
@@ -65,6 +67,8 @@ static bool MathVMRunSimple(const FString& Code, UPARAM(ref) TMap<FString, doubl
 This is the simplest node with support for local variables, resources (see below) and a single return value
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/8523d66f-12af-4fa5-bb6c-00025ed431e1)
+
+### MathVMRunSimpleMulti()
 
 ```cpp
 bool MathVMRunSimpleMulti(const FString& Code, UPARAM(ref) TMap<FString, double>& LocalVariables, const TArray<UMathVMResourceObject*>& Resources, const int32 PopResults, TArray<double>& Results, FString& Error)
@@ -74,6 +78,7 @@ This is a variant of the simple node supporting multiple return values (by speci
 
 ![image](https://github.com/rdeioris/MathVM/assets/2234592/892ea32a-d131-402f-ae7b-167f910a061a)
 
+### MathVMRun()
 
 ```cpp
 static void MathVMRun(const FString& Code, const TMap<FString, double>& GlobalVariables, const TMap<FString, double>& Constants, const TArray<UMathVMResourceObject*>& Resources, const FMathVMEvaluatedWithResult& OnEvaluated, const int32 NumSamples = 1, const FString& SampleLocalVariable = "i");
@@ -86,6 +91,38 @@ will be distributed among various threads (generally based on the number of avai
 
 Note: The braces in the code are used for locking (see the parallel execution section below)
 
+### MathVMPlotter()
+
+```cpp
+static void MathVMPlotter(UObject* WorldContextObject, const FString& Code, const int32 NumSamples, const TMap<FString, FMathVMPlot>& VariablesToPlot, const TArray<FMathVMText>& TextsToPlot, const TMap<FString, double>& Constants, const TMap<FString, double>& GlobalVariables, const TArray<UMathVMResourceObject*>& Resources, const FMathVMPlotGenerated& OnPlotGenerated, const FMathVMPlotterConfig& PlotterConfig, const double DomainMin = 0, const double DomainMax = 1, const FString& SampleLocalVariable = "i");
+```
+
+This follows the same logic of MathVMRun() but plots lines and points in a texture, based on the expressions results. 
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/dbc23085-6d1b-4735-b997-f18f7e45ea89)
+
+The VariablesToPlot map allows you to define how to draw each sampled value (currently you can draw lines, points and a combination of two with custom thickness).
+
+By default a 1024x1024 texture (a RenderTarget) will be returned, but you can pass an already existent render target using the PlotterConfig structure:
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/fb8feceb-f022-4f23-842a-f73a3da7ef6b)
+
+The structure allows to define background, borders and grid properties of the plot too.
+
+This is an example result for 8 samples, two variables (x and y), domain (-1, 1) and a red grid:
+
+```
+y = 0;
+x = 1 / (i + 1);
+```
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/481e39e3-96a3-46e5-aebf-3a6a6ca86cd3)
+
+You can add text to the plot by adding items to the TextsToPlot array:
+
+![image](https://github.com/rdeioris/MathVM/assets/2234592/43ff359a-8226-4e4e-99ad-74cfd62c410d)
+
+You can put global variables in the text by surrounding them in braces. 
 
 ## The C++ API
 
@@ -224,6 +261,8 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### asin(n)
 
+returns the arcsine of n.
+
 ### atan(n)
 
 ### ceil(n)
@@ -231,6 +270,8 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 ### clamp(n, x, y)
 
 ### cos(n)
+
+returns the cosine of n.
 
 ### degrees(n)
 
@@ -252,7 +293,11 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### greater(n, m)
 
+returns 1 if n is greater than m. Otherwise 0.
+
 ### greater_equal(n, m)
+
+returns 1 if n is greater or equal than m. Otherwise 0.
 
 ### hue2b(n)
 
@@ -264,9 +309,15 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### lerp(x, y, n)
 
+returns linear interpolation of x to y with gradient n.
+
 ### less(n, m)
 
+returns 1 if n is less than m. Otherwise 0.
+
 ### less_equal(n, m)
+
+returns 1 if n is less or equal than m. Otherwise 0.
 
 ### log(n)
 
@@ -286,7 +337,11 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### radians(n)
 
+returns n degrees in radians.
+
 ### rand(n, m)
+
+returns a random value between n and m (inclusive).
 
 ### round(n)
 
@@ -298,7 +353,11 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### sqrt(n)
 
+returns the square root of n.
+
 ### tan(n)
+
+returns the tangent of n.
 
 ### trunc(n)
 
