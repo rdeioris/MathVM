@@ -321,17 +321,35 @@ returns 1 if n is less or equal than m. Otherwise 0.
 
 ### log(n)
 
+returns the base E logarithm of n.
+
+### log10(n)
+
+returns the base 10 logarithm of n.
+
 ### log2(n)
+
+returns the base 2 logarithm of n.
+
+### logx(b, n)
+
+returns the base b logarithm of n.
 
 ### map(n, x0, x1, y0, y1)
 
 ### max(...)
 
+returns the maximum value among the passed arguments.
+
 ### min(...)
+
+returns the minimum value among the passed arguments.
 
 ### mod(n, m)
 
 ### not(n)
+
+returns 0 if n not equal to 0.
 
 ### pow(n, m)
 
@@ -349,7 +367,11 @@ returns a random value between n and m (inclusive).
 
 ### sign(n)
 
+returns 1 if n > 0, -1 if n < 0, 0 if n is equal to 0.
+
 ### sin(n)
+
+returns the sine of n.
 
 ### sqrt(n)
 
@@ -361,7 +383,12 @@ returns the tangent of n.
 
 ### trunc(n)
 
+returns the integer part of n.
+
 ### read(id, ...)
+
+read from Resource id (check the Resources section)
 
 ### write(id, ...)
 
+write to Resource id (check the Resources section)
