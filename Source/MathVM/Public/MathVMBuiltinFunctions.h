@@ -36,7 +36,9 @@ namespace MathVM
 		MATHVM_API bool Less(MATHVM_ARGS); constexpr int32 LessArgs = 2;
 		MATHVM_API bool LessEqual(MATHVM_ARGS); constexpr int32 LessEqualArgs = 2;
 		MATHVM_API bool Log(MATHVM_ARGS); constexpr int32 LogArgs = 1;
+		MATHVM_API bool Log10(MATHVM_ARGS); constexpr int32 Log10Args = 1;
 		MATHVM_API bool Log2(MATHVM_ARGS); constexpr int32 Log2Args = 1;
+		MATHVM_API bool LogX(MATHVM_ARGS); constexpr int32 LogXArgs = 2;
 		MATHVM_API bool Map(MATHVM_ARGS); constexpr int32 MapArgs = 5;
 		MATHVM_API bool Max(MATHVM_ARGS); constexpr int32 MaxArgs = -1;
 		MATHVM_API bool Min(MATHVM_ARGS); constexpr int32 MinArgs = -1;

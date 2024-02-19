@@ -922,6 +922,42 @@ bool MathVMBuiltinFunctions_Log2::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Log10, "MathVMBuiltinFunctions.Log10", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Log10::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("log10(3)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 0.47712125471966244);
+
+	return true;
+}
+
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_LogX, "MathVMBuiltinFunctions.LogX", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_LogX::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("logx(3, 4)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestNearlyEqual(TEXT("Result"), Result, 1.2618595071429148);
+
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Tan, "MathVMBuiltinFunctions.Tan", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool MathVMBuiltinFunctions_Tan::RunTest(const FString& Parameters)

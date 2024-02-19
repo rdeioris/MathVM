@@ -290,7 +290,9 @@ FMathVM::FMathVM()
 	RegisterFunction("less", MathVM::BuiltinFunctions::Less, MathVM::BuiltinFunctions::LessArgs);
 	RegisterFunction("less_equal", MathVM::BuiltinFunctions::LessEqual, MathVM::BuiltinFunctions::LessEqualArgs);
 	RegisterFunction("log", MathVM::BuiltinFunctions::Log, MathVM::BuiltinFunctions::LogArgs);
+	RegisterFunction("log10", MathVM::BuiltinFunctions::Log10, MathVM::BuiltinFunctions::Log10Args);
 	RegisterFunction("log2", MathVM::BuiltinFunctions::Log2, MathVM::BuiltinFunctions::Log2Args);
+	RegisterFunction("logx", MathVM::BuiltinFunctions::LogX, MathVM::BuiltinFunctions::LogXArgs);
 	RegisterFunction("map", MathVM::BuiltinFunctions::Map, MathVM::BuiltinFunctions::MapArgs);
 	RegisterFunction("max", MathVM::BuiltinFunctions::Max, MathVM::BuiltinFunctions::MaxArgs);
 	RegisterFunction("min", MathVM::BuiltinFunctions::Min, MathVM::BuiltinFunctions::MinArgs);

@@ -279,9 +279,19 @@ namespace MathVM
 			MATHVM_RETURN(FMath::Loge(Args[0]));
 		}
 
+		bool Log10(MATHVM_ARGS)
+		{
+			MATHVM_RETURN(FMath::LogX(10, Args[0]));
+		}
+
 		bool Log2(MATHVM_ARGS)
 		{
 			MATHVM_RETURN(FMath::Log2(Args[0]));
+		}
+
+		bool LogX(MATHVM_ARGS)
+		{
+			MATHVM_RETURN(FMath::LogX(Args[0], Args[1]));
 		}
 
 		bool Map(MATHVM_ARGS)
