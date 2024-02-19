@@ -259,11 +259,15 @@ returns 1 if all of the arguments are non 0. Otherwise returns 0.
 
 ### any(...)
 
+returns 1 if any of the arguments is non 0. Otherwise returns 0.
+
 ### asin(n)
 
 returns the arcsine of n.
 
 ### atan(n)
+
+returns teh arc tangent of n.
 
 ### ceil(n)
 
@@ -281,6 +285,8 @@ returns the cosine of n.
 
 ### equal(...)
 
+returns 1 if all of the arguments contain the same value, otherwise 0.
+
 ### exp(n)
 
 ### exp2(n)
@@ -288,6 +294,8 @@ returns the cosine of n.
 ### floor(n)
 
 ### fract(n)
+
+returns the fractional part of n.
 
 ### gradient(...)
 
