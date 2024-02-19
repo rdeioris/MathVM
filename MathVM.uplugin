@@ -18,7 +18,8 @@
 		{
 			"Name": "MathVM",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"WhitelistPlatforms": [ "Win64", "Mac", "Linux", "Android", "IOS" ]
 		}
 	]
 }
