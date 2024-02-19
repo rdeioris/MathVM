@@ -192,12 +192,28 @@ Generally every Execute() method is thread safe so you can use it safely in Asyn
 
 ## Resources
 
-Resources are blocks of data that can be read and written by a MathVM instance. Currently Textures, Curves and Array of doubles are supported, but you can implement your own in C++ by implementing the ```IMathVMResource``` interface.
+Resources are blocks of data that can be read and written by a MathVM instance. Currently Textures, Curves, DataTables and Array of doubles are supported, but you can implement your own in C++ by implementing the ```IMathVMResource``` interface.
 
 To access those data from your expressions you can use the read() and write() functions:
 
 ```
+value = read(id, ...);
+write(id, ...);
 ```
+
+In addition to `id` (the index of the provided resource), they have variable number of arguments as each Resource type has a different way of indexing data:
+
+### Texture2D (readonly)
+
+```
+value = read(id, channel, u, v)
+```
+
+`channel` is the color channel (0 for r, 1 for g, 2 for b, 3 for a) u and v are the UV coordinates of the texture sample you want to read (no filtering is applied).
+
+Currently only RGBA and BGRA no mips textures are supported. Every other type of texture will return a 0.
+
+You can create a Texture2D Resource with ```static UMathVMResourceObject* MathVMResourceObjectFromTexture2D(UTexture2D* Texture);```
 
 ## Plotting
 
@@ -296,6 +312,7 @@ You can run from the Automation tool in the Unreal Engine Editor, or via command
  * Investigate an error api for Resources
  * MetaSounds support (generate sounds from expressions)
  * Integration with Compushady (https://github.com/rdeioris/CompushadyUnreal) for GPU execution
+ * Procedural mesh generation from expressions
 
 ## Builtin Functions in FMathVM
 
@@ -332,6 +349,8 @@ returns teh arc tangent of n.
 returns the cosine of n.
 
 ### degrees(n)
+
+returns the value of n radians in degrees.
 
 ### distance(...)
 
