@@ -213,7 +213,60 @@ value = read(id, channel, u, v)
 
 Currently only RGBA and BGRA no mips textures are supported. Every other type of texture will return a 0.
 
-You can create a Texture2D Resource with ```static UMathVMResourceObject* MathVMResourceObjectFromTexture2D(UTexture2D* Texture);```
+You can create a Texture2D Resource with 
+
+```cpp
+static UMathVMResourceObject* MathVMResourceObjectFromTexture2D(UTexture2D* Texture);
+MakeShared<FMathVMTexture2DResource>(Texture); // C++ only version
+```
+
+### Curve (readonly)
+
+```
+value = read(id, channel, t)
+```
+
+```channel``` is the index of the RichCurve in the Curve asset. (0 for a simple float Curve, between 0 and 3 for color curve).
+
+```t``` is the 'time' at which the curve is sampled.
+
+You can create a Curve Resource with 
+
+```cpp
+static UMathVMResourceObject* MathVMResourceObjectFromCurveBase(UCurveBase* Curve);
+MakeShared<FMathVMCurveBaseResource>(Curve); // C++ only version
+```
+
+### DataTable (reaonly)
+
+```
+value = read(id, row, column)
+```
+
+Get a double value from the specified row and column of the DataTable.
+
+Only numeric columns are supported. You need to specify which columns you want to import when creating the Resource:
+
+```cpp
+static UMathVMResourceObject* MathVMResourceObjectFromDataTable(UDataTable* DataTable, const TArray<FString>& FieldNames);
+MakeShared<FMathVMDataTableResource>(DataTable, FieldNames); // C++ only version
+```
+
+### Array of doubles (read/write)
+
+```
+value = read(id, index);
+write(id, index, value);
+```
+
+The simples of all the provided Resources. You just specify the `index` of the array you are interested in.
+
+You can create Array of doubles Resources with:
+
+```cpp
+static UMathVMResourceObject* MathVMResourceObjectAsDoubleArray(const int32 ArraySize);
+MakeShared<FMathVMDoubleArrayResource>(ArraySize); // C++ only version
+```
 
 ## Plotting
 
