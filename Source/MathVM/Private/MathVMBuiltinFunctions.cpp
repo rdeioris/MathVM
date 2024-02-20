@@ -1,3 +1,5 @@
+// Copyright 2024, Roberto De Ioris.
+
 #include "MathVMBuiltinFunctions.h"
 
 namespace MathVM
