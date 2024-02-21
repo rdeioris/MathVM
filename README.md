@@ -11,6 +11,8 @@ Unreal Engine plugin for (parallel) Math Expressions evaluation and plotting
 
 Join the Discord Server: https://discord.gg/WJkRY2UVhn
 
+Buy it from the Marketplace for supporting the development: https://www.unrealengine.com/marketplace/en-US/product/mathvm 
+
 Support the project with Patreon: https://www.patreon.com/rdeioris
 
 Commercial support is provided by Blitter S.r.l. (Italy) [contact the Discord Server Admin for infos]
