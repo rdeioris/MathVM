@@ -477,6 +477,10 @@ returns the base b logarithm of n.
 
 returns the maximum value among the passed arguments.
 
+### mean(...)
+
+returns the mean of the passed arguments.
+
 ### min(...)
 
 returns the minimum value among the passed arguments.
