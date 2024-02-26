@@ -295,6 +295,7 @@ FMathVM::FMathVM()
 	RegisterFunction("logx", MathVM::BuiltinFunctions::LogX, MathVM::BuiltinFunctions::LogXArgs);
 	RegisterFunction("map", MathVM::BuiltinFunctions::Map, MathVM::BuiltinFunctions::MapArgs);
 	RegisterFunction("max", MathVM::BuiltinFunctions::Max, MathVM::BuiltinFunctions::MaxArgs);
+	RegisterFunction("mean", MathVM::BuiltinFunctions::Mean, MathVM::BuiltinFunctions::MeanArgs);
 	RegisterFunction("min", MathVM::BuiltinFunctions::Min, MathVM::BuiltinFunctions::MinArgs);
 	RegisterFunction("mod", MathVM::BuiltinFunctions::Mod, MathVM::BuiltinFunctions::ModArgs);
 	RegisterFunction("not", MathVM::BuiltinFunctions::Not, MathVM::BuiltinFunctions::NotArgs);

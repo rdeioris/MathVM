@@ -317,6 +317,22 @@ namespace MathVM
 			MATHVM_RETURN(MaxValue);
 		}
 
+		bool Mean(MATHVM_ARGS)
+		{
+			if (Args.Num() < 2)
+			{
+				MATHVM_ERROR("mean expects at least 2 arguments");
+			};
+
+			double Result = 0;
+			for (const double Value : Args)
+			{
+				Result += Value;
+			}
+
+			MATHVM_RETURN(Result / Args.Num());
+		}
+
 		bool Min(MATHVM_ARGS)
 		{
 			if (Args.Num() < 2)

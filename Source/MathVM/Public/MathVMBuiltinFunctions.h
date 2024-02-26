@@ -41,6 +41,7 @@ namespace MathVM
 		MATHVM_API bool LogX(MATHVM_ARGS); constexpr int32 LogXArgs = 2;
 		MATHVM_API bool Map(MATHVM_ARGS); constexpr int32 MapArgs = 5;
 		MATHVM_API bool Max(MATHVM_ARGS); constexpr int32 MaxArgs = -1;
+		MATHVM_API bool Mean(MATHVM_ARGS); constexpr int32 MeanArgs = -1;
 		MATHVM_API bool Min(MATHVM_ARGS); constexpr int32 MinArgs = -1;
 		MATHVM_API bool Mod(MATHVM_ARGS); constexpr int32 ModArgs = 2;
 		MATHVM_API bool Not(MATHVM_ARGS); constexpr int32 NotArgs = 1;

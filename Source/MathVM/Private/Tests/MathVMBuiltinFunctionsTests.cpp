@@ -202,6 +202,24 @@ bool MathVMBuiltinFunctions_Min::RunTest(const FString& Parameters)
 	return true;
 }
 
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Mean, "MathVMBuiltinFunctions.Mean", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
+
+bool MathVMBuiltinFunctions_Mean::RunTest(const FString& Parameters)
+{
+	FMathVM MathVM;
+	MathVM.TokenizeAndCompile("mean(3, 3, 3, 3)");
+
+	TMap<FString, double> LocalVariables;
+	double Result = 0;
+	FString Error;
+
+	TestTrue(TEXT("bSuccess"), MathVM.ExecuteOne(LocalVariables, Result, Error));
+
+	TestEqual(TEXT("Result"), Result, 3.0);
+
+	return true;
+}
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_Max, "MathVMBuiltinFunctions.Max", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool MathVMBuiltinFunctions_Max::RunTest(const FString& Parameters)
