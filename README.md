@@ -533,7 +533,11 @@ returns a random value between n and m (inclusive).
 
 ### round(n)
 
+returns the nearest integer to n. Example 0.1 returns 0, 0.9 returns 1, 0.5 returns 0.
+
 ### round_even(n)
+
+returns the nearest even integer to n. Example 3.5 returns 4, 4.5 returns 4.
 
 ### sign(n)
 
