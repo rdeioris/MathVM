@@ -397,7 +397,11 @@ returns teh arc tangent of n.
 
 ### ceil(n)
 
+returns the equal or next integer to n. Example if n equal 3 returns 3, if n equal 2.9 returns 3, if n equal 2.1 returns 3.
+
 ### clamp(n, x, y)
+
+returns n if n is between x and y, otherwise returns x if n is lower than n or y if n is greater than y.
 
 ### cos(n)
 
@@ -409,7 +413,11 @@ returns the value of n radians in degrees.
 
 ### distance(...)
 
+returns the distance between 2 vectors or scalars. Example for a tridimensional vector: distance(x1, y1, z1, x1, x2, z2).
+
 ### dot(...)
+
+returns the dot product between 2 vectors or scalars. Example for a tridimensional vector: dot(x1, y1, z1, x1, x2, z2).
 
 ### equal(...)
 
@@ -425,7 +433,9 @@ returns 1 if all of the arguments contain the same value, otherwise 0.
 
 returns the fractional part of n.
 
-### gradient(...)
+### gradient(n, ...)
+
+returns based on the specified map of gradients. Example with 3 ranges: gradient(n, range0, value0, range1, value1, range2, value2), gradient(n, 0, 1, 0.5, 100, 1, 1000), will returns 1 if n is equal 0, or 550 if n is equal 0.75.
 
 ### greater(n, m)
 
