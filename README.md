@@ -425,9 +425,15 @@ returns 1 if all of the arguments contain the same value, otherwise 0.
 
 ### exp(n)
 
+return e raised to the power of n.
+
 ### exp2(n)
 
+return 2 raised to the power of n.
+
 ### floor(n)
+
+returns the equal or lesser integer to n. Example if n equal 3 returns 3, if n equal 2.9 returns 2, if n equal 2.1 returns 2.
 
 ### fract(n)
 
@@ -447,11 +453,19 @@ returns 1 if n is greater or equal than m. Otherwise 0.
 
 ### hue2b(n)
 
+returns the blue value given hue.
+
 ### hue2g(n)
+
+returns the green value given hue.
 
 ### hue2r(n)
 
+returns the red value given hue.
+
 ### length(...)
+
+returns the length of the specified vector. Example: length(1, 2, 3, 4) and length(1, 2) will returns respectively the length of a quadridimensional vector and a bidimensional one.
 
 ### lerp(x, y, n)
 
@@ -483,6 +497,8 @@ returns the base b logarithm of n.
 
 ### map(n, x0, x1, y0, y1)
 
+returns the value of n (comprised between x0 and y0) remapped to x1 and y1. Example: map(0.5, 0, 100, 1, 200) returns 150.
+
 ### max(...)
 
 returns the maximum value among the passed arguments.
@@ -497,11 +513,15 @@ returns the minimum value among the passed arguments.
 
 ### mod(n, m)
 
+returns n modulo m (compatible with C fmod).
+
 ### not(n)
 
 returns 0 if n not equal to 0.
 
 ### pow(n, m)
+
+returns n to the power of m.
 
 ### radians(n)
 
