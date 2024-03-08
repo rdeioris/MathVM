@@ -204,9 +204,9 @@ namespace MathVM
 				}
 			}
 
-			if (FoundRangeIndex < 0)
+			if (FoundRangeIndex < 0 || FoundRangeIndex >= Ranges.Num())
 			{
-				FoundRangeIndex = Ranges.Num() - 1;
+				MATHVM_RETURN(Ranges.Last().Value);
 			}
 
 			const double Delta = Value - Ranges[FoundRangeIndex].Key;
