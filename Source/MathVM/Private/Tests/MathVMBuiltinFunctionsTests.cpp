@@ -8,7 +8,7 @@
 #if ENGINE_MINOR_VERSION < 3
 static bool TestNearlyEqual(const TCHAR* What, const double A, const double B)
 {
-	return true;
+	return false;
 }
 #endif
 
