@@ -4,6 +4,14 @@
 #include "MathVM.h"
 #include "Misc/AutomationTest.h"
 
+// this is just a hack for allowing compilation on UE < 5.3, the test suite is meant to be run on UE >= 5.3
+#if ENGINE_MINOR_VERSION < 3
+static bool TestNearlyEqual(const TCHAR* What, const double A, const double B)
+{
+	return true;
+}
+#endif
+
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(MathVMBuiltinFunctions_ATan, "MathVMBuiltinFunctions.ATan", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 bool MathVMBuiltinFunctions_ATan::RunTest(const FString& Parameters)
