@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
+#include "Runtime/Launch/Resources/Version.h"
 
 #define MATHVM_ARGS FMathVMCallContext& CallContext, const TArray<double>& Args
 #define MATHVM_LAMBDA [](MATHVM_ARGS) -> bool
