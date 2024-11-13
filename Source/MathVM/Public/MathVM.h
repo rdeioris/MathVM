@@ -12,6 +12,12 @@
 #define MATHVM_RETURN(x) return CallContext.PushResult(x)
 #define MATHVM_ERROR(x) return CallContext.SetError(x)
 
+#if ENGINE_MINOR_VERSION >= 5
+#define MATHVM_POP(x) x.Pop(EAllowShrinking::No)
+#else
+#define MATHVM_POP(x) x.Pop(false)
+#endif
+
 enum class EMathVMTokenType : uint8
 {
 	Number,

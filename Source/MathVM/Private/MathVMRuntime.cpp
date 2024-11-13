@@ -97,7 +97,7 @@ bool FMathVMBase::Execute(TMap<FString, double>& LocalVariables, const int32 Pop
 			return false;
 		}
 
-		const FMathVMToken* LastToken = CallContext.Stack.Pop(false);
+		const FMathVMToken* LastToken = MATHVM_POP(CallContext.Stack);
 
 		if (LastToken->TokenType == EMathVMTokenType::Number)
 		{
@@ -165,7 +165,7 @@ bool FMathVMCallContext::PopArgument(double& Value)
 		return false;
 	}
 
-	const FMathVMToken* Token = Stack.Pop(false);
+	const FMathVMToken* Token = MATHVM_POP(Stack);
 
 	if (Token->TokenType == EMathVMTokenType::Variable)
 	{
@@ -208,7 +208,7 @@ bool FMathVMCallContext::PopName(FString& Name)
 		return false;
 	}
 
-	const FMathVMToken* Token = Stack.Pop(false);
+	const FMathVMToken* Token = MATHVM_POP(Stack);
 
 	if (Token->TokenType == EMathVMTokenType::Variable)
 	{

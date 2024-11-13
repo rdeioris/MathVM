@@ -34,7 +34,7 @@ bool FMathVMBase::Compile()
 		{
 			while (!OperatorStack.IsEmpty() && OperatorStack.Last()->TokenType == EMathVMTokenType::Operator && OperatorStack.Last()->Precedence <= Token.Precedence)
 			{
-				OutputQueue.Add(OperatorStack.Pop(false));
+				OutputQueue.Add(MATHVM_POP(OperatorStack));
 			}
 			OperatorStack.Add(&Token);
 		}
@@ -42,7 +42,7 @@ bool FMathVMBase::Compile()
 		{
 			while (!OperatorStack.IsEmpty() && OperatorStack.Last()->TokenType != EMathVMTokenType::OpenParenthesis)
 			{
-				OutputQueue.Add(OperatorStack.Pop(false));
+				OutputQueue.Add(MATHVM_POP(OperatorStack));
 			}
 
 			if (FunctionHasFirstArgStack.IsEmpty() || !FunctionHasFirstArgStack.Last())
@@ -90,13 +90,13 @@ bool FMathVMBase::Compile()
 		{
 			while (!OperatorStack.IsEmpty() && OperatorStack.Last()->TokenType != EMathVMTokenType::OpenParenthesis)
 			{
-				OutputQueue.Add(OperatorStack.Pop(false));
+				OutputQueue.Add(MATHVM_POP(OperatorStack));
 			}
 			if (OperatorStack.IsEmpty() || OperatorStack.Last()->TokenType != EMathVMTokenType::OpenParenthesis)
 			{
 				return SetError("Expected open parenthesis");
 			}
-			OperatorStack.Pop(false);
+			MATHVM_POP(OperatorStack);
 
 			if (!OperatorStack.IsEmpty())
 			{
@@ -105,13 +105,13 @@ bool FMathVMBase::Compile()
 					// this is basically the only case the compiler needs a const_cast
 					FMathVMToken* FunctionToken = const_cast<FMathVMToken*>(OperatorStack.Last());
 
-					FunctionToken->DetectedNumArgs = FunctionsArgsStack.Pop(false) + (FunctionHasFirstArgStack.Pop() ? 1 : 0);
+					FunctionToken->DetectedNumArgs = MATHVM_POP(FunctionsArgsStack) + (FunctionHasFirstArgStack.Pop() ? 1 : 0);
 
 					if (FunctionToken->NumArgs >= 0 && FunctionToken->DetectedNumArgs != FunctionToken->NumArgs)
 					{
 						return SetError(FString::Printf(TEXT("Function %s expects %d argument%s (detected %d)"), *(FunctionToken->Value), FunctionToken->NumArgs, FunctionToken->NumArgs == 1 ? TEXT("") : TEXT("s"), FunctionToken->DetectedNumArgs));
 					}
-					OutputQueue.Add(OperatorStack.Pop(false));
+					OutputQueue.Add(MATHVM_POP(OperatorStack));
 				}
 			}
 		}
@@ -123,7 +123,7 @@ bool FMathVMBase::Compile()
 				{
 					return SetError("Mismatched parenthesis");
 				}
-				OutputQueue.Add(OperatorStack.Pop(false));
+				OutputQueue.Add(MATHVM_POP(OperatorStack));
 			}
 			Statements.Add(OutputQueue);
 			OutputQueue.Empty();
@@ -139,7 +139,7 @@ bool FMathVMBase::Compile()
 		{
 			return SetError("Mismatched parenthesis");
 		}
-		OutputQueue.Add(OperatorStack.Pop(false));
+		OutputQueue.Add(MATHVM_POP(OperatorStack));
 	}
 	Statements.Add(OutputQueue);
 
