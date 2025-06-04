@@ -1,7 +1,8 @@
-// Copyright 2024 - Roberto De Ioris.
+// Copyright 2024-2025 - Roberto De Ioris.
 
 #if WITH_DEV_AUTOMATION_TESTS
 #include "MathVM.h"
+#include "Async/ParallelFor.h"
 #include "Misc/AutomationTest.h"
 
 

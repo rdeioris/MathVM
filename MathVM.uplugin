@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "20241123",
+	"VersionName": "20250604",
 	"FriendlyName": "MathVM",
 	"Description": "Math Expressions Evaluator",
 	"Category": "Other",

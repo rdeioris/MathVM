@@ -1,6 +1,7 @@
-// Copyright 2024, Roberto De Ioris.
+// Copyright 2024-2025, Roberto De Ioris.
 
 #include "MathVMBuiltinFunctions.h"
+#include "Math/RandomStream.h"
 
 namespace MathVM
 {
